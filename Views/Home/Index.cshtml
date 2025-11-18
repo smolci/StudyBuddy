@@ -1,8 +1,157 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    Layout = null; // tako ignoriraš _Layout.cshtml
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Study Buddy – Dashboard</title>
+    <link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
+</head>
+<body>
+<div class="app-shell">
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="topbar-avatar">SB</div>
+            <div class="topbar-title">
+                <span>Welcome back</span>
+                <span>Study Buddy</span>
+            </div>
+        </div>
+        <div class="topbar-actions">
+            <button class="btn btn-ghost">Log in</button>
+            <button class="btn btn-primary">Start Focus</button>
+        </div>
+    </header>
+
+    <main class="main-layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div>
+                <div class="sidebar-section-title">Navigation</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <span class="icon">🏠</span>
+                        <span>Dashboard</span>
+                    </li>
+                    <li class="nav-item">
+                        <span class="icon">⏱️</span>
+                        <span>Pomodoro</span>
+                    </li>
+                    <li class="nav-item active">
+                        <span class="icon">✅</span>
+                        <span>Tasks</span>
+                    </li>
+                    <li class="nav-item">
+                        <span class="icon">📊</span>
+                        <span>Stats</span>
+                    </li>
+                    <li class="nav-item">
+                        <span class="icon">⚙️</span>
+                        <span>Settings</span>
+                    </li>
+                </ul>
+
+                <div class="sidebar-section-title">Projects</div>
+                <div class="project-chips">
+                    <span class="chip">OS Exam</span>
+                    <span class="chip chip-alt">VoidVerse</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center column -->
+        <section class="center-column">
+            <section class="focus-card">
+                <div>
+                    <div class="focus-header-pill">Focus Mode</div>
+                    <div class="focus-description" style="margin-top:12px;">
+                        <div class="label">Next session</div>
+                        <p style="margin-top:4px;">
+                            <strong>25 min</strong> • Deep work on
+                            <strong>“Algorithms notes”</strong>.<br />
+                            Stay consistent—small steps compound.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timer-card">
+                    <div class="timer-circle">
+                        <div class="timer-inner">
+                            18:42
+                        </div>
+                    </div>
+                    <div class="timer-actions">
+                        <button class="btn-pill primary">Start</button>
+                        <button class="btn-pill secondary">Reset</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tasks-card">
+                <div class="card-title">Today’s Tasks</div>
+                <ul class="task-list">
+                    <li class="task-item">
+                        <div class="task-left">
+                            <div class="task-checkbox"></div>
+                            <span>Read chapter on concurrency</span>
+                        </div>
+                        <span class="task-duration">25m</span>
+                    </li>
+                    <li class="task-item">
+                        <div class="task-left">
+                            <div class="task-checkbox"></div>
+                            <span>Write summary flashcards</span>
+                        </div>
+                        <span class="task-duration">30m</span>
+                    </li>
+                    <li class="task-item">
+                        <div class="task-left">
+                            <div class="task-checkbox"></div>
+                            <span>Past exam – problems 1–3</span>
+                        </div>
+                        <span class="task-duration">45m</span>
+                    </li>
+                </ul>
+            </section>
+        </section>
+
+        <!-- Right column -->
+        <section class="right-column">
+
+            <section class="weekly-card">
+                <div class="weekly-header">
+                    <div>
+                        <div class="weekly-label">Weekly focus</div>
+                        <div class="weekly-time">6h 40m</div>
+                    </div>
+                    <div class="weekly-change">+12%</div>
+                </div>
+                <div class="weekly-chart">
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                    <div class="chart-bar"></div>
+                </div>
+            </section>
+
+            <section class="quick-add-card">
+                <div class="quick-add-label">Quick Add</div>
+                <div class="quick-add-row">
+                    <input class="quick-input" placeholder="New task..." />
+                    <button class="btn-add">Add</button>
+                </div>
+                <div class="quick-tip">Tip: press <strong>Enter</strong> to add quickly.</div>
+            </section>
+
+        </section>
+
+    </main>
 </div>
+</body>
+</html>
