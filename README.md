@@ -41,4 +41,4 @@ The system thus combines the organization of learning content, repetition, and k
 Entities: user, subject, topic, flashcard, quiz, question, study_session.
 
 ## Technologies used
-.NET 10, Azure (Database and Web App)
+.NET 10, Azure (Database and Web App), ...
