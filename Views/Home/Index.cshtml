@@ -56,8 +56,8 @@
 
                 <div class="sidebar-section-title">Projects</div>
                 <div class="project-chips">
-                    <span class="chip">OS Exam</span>
-                    <span class="chip chip-alt">VoidVerse</span>
+                    <span class="chip">AIPS1 Exam</span>
+                    <span class="chip chip-alt">UI Exam</span>
                 </div>
             </div>
         </aside>
@@ -80,7 +80,7 @@
                 <div class="timer-card">
                     <div class="timer-circle">
                         <div class="timer-inner">
-                            18:42
+                            00:00
                         </div>
                     </div>
                     <div class="timer-actions">
@@ -116,6 +116,14 @@
                     </li>
                 </ul>
             </section>
+            <section class="quick-add-card">
+                <div class="quick-add-label">Quick Add</div>
+                <div class="quick-add-row">
+                    <input class="quick-input" placeholder="New task..." />
+                    <button class="btn-add">Add</button>
+                </div>
+                <div class="quick-tip">Press <strong>Enter</strong> to add quickly.</div>
+            </section>
         </section>
 
         <!-- Right column -->
@@ -139,19 +147,38 @@
                     <div class="chart-bar"></div>
                 </div>
             </section>
-
-            <section class="quick-add-card">
-                <div class="quick-add-label">Quick Add</div>
-                <div class="quick-add-row">
-                    <input class="quick-input" placeholder="New task..." />
-                    <button class="btn-add">Add</button>
-                </div>
-                <div class="quick-tip">Tip: press <strong>Enter</strong> to add quickly.</div>
-            </section>
-
         </section>
 
     </main>
 </div>
+    </main>
+</div>
+
+<!-- Timer modal -->
+<div class="timer-modal-backdrop" id="timerModal">
+    <div class="timer-modal">
+        <h2 class="timer-modal-title">Set focus time</h2>
+        <p class="timer-modal-text">How many minutes do you want to focus?</p>
+
+        <div class="timer-modal-input-row">
+            <input type="number" id="timerMinutesInput" min="1" max="180" value="25" />
+            <span class="timer-modal-input-label">minutes</span>
+        </div>
+
+        <div class="timer-modal-presets">
+            <button type="button" class="timer-preset-btn" data-minutes="5">5 min</button>
+            <button type="button" class="timer-preset-btn" data-minutes="15">15 min</button>
+            <button type="button" class="timer-preset-btn" data-minutes="25">25 min</button>
+        </div>
+
+        <div class="timer-modal-actions">
+            <button type="button" class="btn-pill secondary" data-action="cancel">Cancel</button>
+            <button type="button" class="btn-pill primary" data-action="confirm">Start</button>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/site.js" asp-append-version="true"></script>
 </body>
 </html>
+
