@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = null; // tako ignoriraš _Layout.cshtml
+    Layout = null;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -15,13 +15,26 @@
         <div class="topbar-left">
             <div class="topbar-avatar">SB</div>
             <div class="topbar-title">
-                <span>Welcome back</span>
+                <span>
+                    @using Microsoft.AspNetCore.Identity
+                    @inject UserManager<User> UserManager
+                    @inject SignInManager<User> SignInManager
+
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        var currentUser = await UserManager.GetUserAsync(User);
+                        <text>Welcome back, @currentUser.FirstName!</text>
+                    }
+                    else
+                    {
+                        <text>Welcome, guest!</text>
+                    }
+                </span>
                 <span>Study Buddy</span>
             </div>
         </div>
         <div class="topbar-actions">
-            <button class="btn btn-ghost">Log in</button>
-            <button class="btn btn-primary">Start Focus</button>
+            <partial name="_LoginPartial" />
         </div>
     </header>
 
@@ -181,4 +194,3 @@
 <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
 </html>
-

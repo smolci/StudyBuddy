@@ -1,11 +1,13 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using StudyBuddy.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StudyBuddy.Controllers;
 
 public class HomeController : Controller
 {
+    [Authorize]
     public IActionResult Index()
     {
         return View();

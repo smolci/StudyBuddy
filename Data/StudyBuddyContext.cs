@@ -1,20 +1,18 @@
-namespace StudyBuddy.Data;
-using StudyBuddy.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using StudyBuddy.Models;
 
-public class StudyBuddyContext : DbContext
+namespace StudyBuddy.Data;
+
+public class StudyBuddyContext : IdentityDbContext<User>
 {
-
-    public StudyBuddyContext(DbContextOptions<StudyBuddyContext> options) : base(options)
+    public StudyBuddyContext(DbContextOptions<StudyBuddyContext> options) 
+        : base(options)
     {
-
     }
-
-    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>().ToTable("User");
+        base.OnModelCreating(modelBuilder);
     }
-
 }
