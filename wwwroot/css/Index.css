@@ -242,14 +242,21 @@ body {
 
 .focus-card {
     display: grid;
-    grid-template-columns: 180px 1fr;
-    column-gap: 20px;
-
+    grid-template-columns: 1fr 1fr;   /* 50 / 50 */
+    column-gap: 40px;                 /* po želji, lahko daš 20px */
+    
     padding: 18px 20px 20px;
     background: var(--bg-card);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-soft);
 }
+
+/* oba bloka naj se raztegneta čez celotno višino celice */
+.focus-card > .weekly-card,
+.focus-card > .timer-card {
+    height: 100%;
+}
+
 
 .focus-header-pill {
     align-self: flex-start;
@@ -286,7 +293,6 @@ body {
 /* Timer Card ------------------------------------------------------ */
 
 .timer-card {
-    margin-top: 6px;
 
     display: flex;
     flex-direction: column;
@@ -317,6 +323,7 @@ body {
 
     margin-bottom: 20px;
 }
+
 
 .timer-inner {
     width: 138px;
@@ -367,7 +374,79 @@ body {
 .btn-pill:hover {
     transform: translateY(-1px);
     box-shadow: 0 8px 16px rgba(227, 133, 81, 0.3);
+
+    /* Time's up modal extras ------------------------------------------ */
 }
+
+.timer-end-actions {
+    display: flex;
+    justify-content: space-between; /* Yes levo, No desno */
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin-top: 4px;
+}
+
+
+.timer-end-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+/* hint, ki je pod obema gumboma */
+.timer-end-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 8px;
+
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(4px);
+    transition:
+        opacity 0.15s ease,
+        max-height 0.15s ease,
+        transform 0.15s ease;
+}
+
+/* vidno stanje, dodamo class iz JS */
+.timer-end-hint.is-visible {
+    opacity: 1;
+    max-height: 40px;
+    transform: translateY(0);
+}
+
+
+/* Quick Add specific bits ----------------------------------------- */
+
+#quickAddSubject {
+    flex: 1;
+    padding: 8px 10px;
+
+    border-radius: 999px;
+    border: 1px solid var(--border-soft);
+    background: #fff;
+
+    font-size: 13px;
+    color: var(--text-main);
+    outline: none;
+}
+
+#quickAddSubject:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(243, 158, 96, 0.25);
+}
+
+.task-subject {
+    display: block;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+
 
 /* Tasks Card ------------------------------------------------------ */
 
@@ -403,39 +482,84 @@ body {
     align-items: center;
     justify-content: space-between;
 
-    padding: 10px 13px;
-
     background: #faf4f1;
-    border: 1px solid #f1ded6;
     border-radius: 14px;
+    padding: 10px 13px;
+    border: 1px solid #f1ded6;
+
+    /* za fade-out animacijo */
+    max-height: 80px;
+    overflow: hidden;
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease,
+        max-height 0.25s ease,
+        margin 0.25s ease,
+        padding 0.25s ease;
 }
+
+.task-item.completed {
+    opacity: 0;
+    transform: translateY(4px);
+    max-height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
 
 .task-left {
     display: flex;
     align-items: center;
     gap: 10px;
-
     font-size: 14px;
     color: #754449;
+    cursor: pointer; /* ker je label klikan */
+}
+
+.task-checkbox-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .task-checkbox {
     width: 18px;
     height: 18px;
-
     border-radius: 6px;
     border: 1.5px solid #e3c5b9;
-    background: white;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
 }
 
-.task-duration {
-    padding: 4px 10px;
+.task-checkbox::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background: var(--accent-strong);
 
-    background: #fdf0ea;
-    border-radius: 999px;
+    opacity: 0;
+    transform: scale(0.7);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
 
-    font-size: 12px;
-    color: #b58982;
+/* checked stanje */
+.task-checkbox-input:checked + .task-checkbox {
+    background: var(--accent-soft);
+    border-color: var(--accent-strong);
+    transform: translateY(0.5px);
+}
+
+.task-checkbox-input:checked + .task-checkbox::after {
+    opacity: 1;
+    transform: scale(1);
 }
 
 /* ========================================================================== */
@@ -504,6 +628,7 @@ body {
     border-radius: 14px;
 }
 
+
 .chart-bar {
     flex: 1;
     height: 40px;
@@ -513,12 +638,21 @@ body {
     opacity: 0.88;
 }
 
-.chart-bar:nth-child(2) { height: 60px; }
-.chart-bar:nth-child(3) { height: 80px; }
-.chart-bar:nth-child(4) { height: 70px; }
-.chart-bar:nth-child(5) { height: 82px; }
-.chart-bar:nth-child(6) { height: 35px; }
-.chart-bar:nth-child(7) { height: 30px; }
+.chart-bar {
+    flex: 1;
+    height: 60px; /* was 40px */
+    background: #fbb36f;
+    border-radius: 999px 999px 4px 4px;
+    opacity: 0.88;
+}
+
+.chart-bar:nth-child(2) { height: 110px; } 
+.chart-bar:nth-child(3) { height: 140px; } 
+.chart-bar:nth-child(4) { height: 125px; } 
+.chart-bar:nth-child(5) { height: 180px; } 
+.chart-bar:nth-child(6) { height: 90px; }  
+.chart-bar:nth-child(7) { height: 80px; }  
+
 
 /* Quick Add ------------------------------------------------------- */
 
@@ -584,6 +718,45 @@ body {
 
 /* Timer modal ------------------------------------------------------ */
 
+.timer-modal {
+    width: 100%;
+    max-width: 360px;
+
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+
+    padding: 20px 22px 18px;
+
+    position: relative; /* <-- to dodaj */
+}
+
+/* Close gumb (X) v zgornjem desnem kotu */
+.modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+
+    color: var(--text-muted);
+    padding: 4px;
+    border-radius: 999px;
+
+    transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
+}
+
+.modal-close-btn:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--accent-dark);
+    transform: translateY(-0.5px);
+}
+
+
 .timer-modal-backdrop {
     position: fixed;
     inset: 0;
@@ -613,6 +786,32 @@ body {
     box-shadow: var(--shadow-soft);
 
     padding: 20px 22px 18px;
+
+    position: relative; /* <-- to dodaj */
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+
+    color: var(--text-muted);
+    padding: 4px;
+    border-radius: 999px;
+
+    transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
+}
+
+.modal-close-btn:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--accent-dark);
+    transform: translateY(-0.5px);
 }
 
 .timer-modal-title {
