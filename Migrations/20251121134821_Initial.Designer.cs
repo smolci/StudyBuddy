@@ -12,7 +12,7 @@ using StudyBuddy.Data;
 namespace StudyBuddy.Migrations
 {
     [DbContext(typeof(StudyBuddyContext))]
-    [Migration("20251119143718_Initial")]
+    [Migration("20251121134821_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -162,6 +162,153 @@ namespace StudyBuddy.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("StudyBuddy.Models.Question", b =>
+                {
+                    b.Property<int>("QuestionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("QuestionId"));
+
+                    b.Property<string>("CorrectAnswer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TopicId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WrongAnswer1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WrongAnswer2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WrongAnswer3")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("QuestionId");
+
+                    b.HasIndex("TopicId");
+
+                    b.ToTable("Questions");
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.Quiz", b =>
+                {
+                    b.Property<int>("QuizId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("QuizId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("QuizId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Quizzes");
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.QuizQuestion", b =>
+                {
+                    b.Property<int>("QuizId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("QuizId", "QuestionId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("QuizQuestions");
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.StudySession", b =>
+                {
+                    b.Property<int>("StudySessionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StudySessionId"));
+
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("StudySessionId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("StudySessions");
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.Subject", b =>
+                {
+                    b.Property<int>("SubjectId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubjectId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("SubjectId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Subjects");
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.Topic", b =>
+                {
+                    b.Property<int>("TopicId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TopicId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TopicId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("Topics");
+                });
+
             modelBuilder.Entity("StudyBuddy.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -182,9 +329,11 @@ namespace StudyBuddy.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -282,6 +431,119 @@ namespace StudyBuddy.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.Question", b =>
+                {
+                    b.HasOne("StudyBuddy.Models.Topic", "Topic")
+                        .WithMany("Questions")
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Topic");
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.Quiz", b =>
+                {
+                    b.HasOne("StudyBuddy.Models.User", "User")
+                        .WithMany("Quizzes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.QuizQuestion", b =>
+                {
+                    b.HasOne("StudyBuddy.Models.Question", "Question")
+                        .WithMany("QuizQuestions")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("StudyBuddy.Models.Quiz", "Quiz")
+                        .WithMany("QuizQuestions")
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+
+                    b.Navigation("Quiz");
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.StudySession", b =>
+                {
+                    b.HasOne("StudyBuddy.Models.Subject", "Subject")
+                        .WithMany("StudySessions")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("StudyBuddy.Models.User", "User")
+                        .WithMany("StudySessions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.Subject", b =>
+                {
+                    b.HasOne("StudyBuddy.Models.User", "User")
+                        .WithMany("Subjects")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.Topic", b =>
+                {
+                    b.HasOne("StudyBuddy.Models.Subject", "Subject")
+                        .WithMany("Topics")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.Question", b =>
+                {
+                    b.Navigation("QuizQuestions");
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.Quiz", b =>
+                {
+                    b.Navigation("QuizQuestions");
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.Subject", b =>
+                {
+                    b.Navigation("StudySessions");
+
+                    b.Navigation("Topics");
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.Topic", b =>
+                {
+                    b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("StudyBuddy.Models.User", b =>
+                {
+                    b.Navigation("Quizzes");
+
+                    b.Navigation("StudySessions");
+
+                    b.Navigation("Subjects");
                 });
 #pragma warning restore 612, 618
         }

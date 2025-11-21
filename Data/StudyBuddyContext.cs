@@ -20,6 +20,12 @@ namespace StudyBuddy.Data
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<StudySession>()
+                .HasOne(s => s.Subject)
+                .WithMany(su => su.StudySessions)
+                .HasForeignKey(s => s.SubjectId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // N:N relacija Quiz <-> Question
             builder.Entity<QuizQuestion>()
                 .HasKey(qq => new { qq.QuizId, qq.QuestionId });
@@ -27,12 +33,15 @@ namespace StudyBuddy.Data
             builder.Entity<QuizQuestion>()
                 .HasOne(qq => qq.Quiz)
                 .WithMany(q => q.QuizQuestions)
-                .HasForeignKey(qq => qq.QuizId);
+                .HasForeignKey(qq => qq.QuizId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<QuizQuestion>()
                 .HasOne(qq => qq.Question)
                 .WithMany(q => q.QuizQuestions)
-                .HasForeignKey(qq => qq.QuestionId);
+                .HasForeignKey(qq => qq.QuestionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }
