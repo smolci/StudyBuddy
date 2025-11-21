@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Study Buddy – Dashboard</title>
+    <title>Study Buddy</title>
     <link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
 </head>
 <body>
@@ -23,7 +23,8 @@
                     @if (SignInManager.IsSignedIn(User))
                     {
                         var currentUser = await UserManager.GetUserAsync(User);
-                        <text>Welcome back, @currentUser.FirstName!</text>
+                        var displayName = currentUser?.FirstName ?? currentUser?.UserName ?? UserManager.GetUserName(User) ?? "user";
+                        <text>Welcome back, @displayName!</text>
                     }
                     else
                     {
