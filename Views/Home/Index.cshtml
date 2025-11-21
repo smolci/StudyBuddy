@@ -68,10 +68,10 @@
                     </li>
                 </ul>
 
-                <div class="sidebar-section-title">Projects</div>
+                <div class="sidebar-section-title">Subjects</div>
                 <div class="project-chips">
-                    <span class="chip">AIPS1 Exam</span>
-                    <span class="chip chip-alt">UI Exam</span>
+                    <span class="chip">Subject1</span>
+                    <span class="chip chip-alt">Subject2</span>
                 </div>
             </div>
         </aside>
@@ -79,71 +79,7 @@
         <!-- Center column -->
         <section class="center-column">
             <section class="focus-card">
-                <div>
-                    <div class="focus-header-pill">Focus Mode</div>
-                    <div class="focus-description" style="margin-top:12px;">
-                        <div class="label">Next session</div>
-                        <p style="margin-top:4px;">
-                            <strong>25 min</strong> • Deep work on
-                            <strong>“Algorithms notes”</strong>.<br />
-                            Stay consistent—small steps compound.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="timer-card">
-                    <div class="timer-circle">
-                        <div class="timer-inner">
-                            00:00
-                        </div>
-                    </div>
-                    <div class="timer-actions">
-                        <button class="btn-pill primary">Start</button>
-                        <button class="btn-pill secondary">Reset</button>
-                    </div>
-                </div>
-            </section>
-
-            <section class="tasks-card">
-                <div class="card-title">Today’s Tasks</div>
-                <ul class="task-list">
-                    <li class="task-item">
-                        <div class="task-left">
-                            <div class="task-checkbox"></div>
-                            <span>Read chapter on concurrency</span>
-                        </div>
-                        <span class="task-duration">25m</span>
-                    </li>
-                    <li class="task-item">
-                        <div class="task-left">
-                            <div class="task-checkbox"></div>
-                            <span>Write summary flashcards</span>
-                        </div>
-                        <span class="task-duration">30m</span>
-                    </li>
-                    <li class="task-item">
-                        <div class="task-left">
-                            <div class="task-checkbox"></div>
-                            <span>Past exam – problems 1–3</span>
-                        </div>
-                        <span class="task-duration">45m</span>
-                    </li>
-                </ul>
-            </section>
-            <section class="quick-add-card">
-                <div class="quick-add-label">Quick Add</div>
-                <div class="quick-add-row">
-                    <input class="quick-input" placeholder="New task..." />
-                    <button class="btn-add">Add</button>
-                </div>
-                <div class="quick-tip">Press <strong>Enter</strong> to add quickly.</div>
-            </section>
-        </section>
-
-        <!-- Right column -->
-        <section class="right-column">
-
-            <section class="weekly-card">
+               <section class="weekly-card">
                 <div class="weekly-header">
                     <div>
                         <div class="weekly-label">Weekly focus</div>
@@ -161,7 +97,75 @@
                     <div class="chart-bar"></div>
                 </div>
             </section>
+                <div class="timer-card">
+                    <div class="timer-circle">
+                        <div class="timer-inner">
+                            00:00
+                        </div>
+                    </div>
+                    <div class="timer-actions">
+                        <button class="btn-pill primary">Start</button>
+                        <button class="btn-pill secondary">Reset</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tasks-card">
+    <div class="card-title">Today’s Tasks</div>
+    <ul class="task-list">
+        <li class="task-item">
+            <label class="task-left">
+                <input type="checkbox" class="task-checkbox-input" />
+                <span class="task-checkbox"></span>
+                <div>
+                    <span>Read chapter on concurrency</span>
+                    <!-- subject optional -->
+                    <!-- <span class="task-subject">AIPS1 Exam</span> -->
+                </div>
+            </label>
+            <span class="task-duration">25m</span>
+        </li>
+
+        <li class="task-item">
+            <label class="task-left">
+                <input type="checkbox" class="task-checkbox-input" />
+                <span class="task-checkbox"></span>
+                <div>
+                    <span>Write summary flashcards</span>
+                </div>
+            </label>
+            <span class="task-duration">30m</span>
+        </li>
+
+        <li class="task-item">
+            <label class="task-left">
+                <input type="checkbox" class="task-checkbox-input" />
+                <span class="task-checkbox"></span>
+                <div>
+                    <span>Past exam – problems 1–3</span>
+                </div>
+            </label>
+            <span class="task-duration">45m</span>
+        </li>
+    </ul>
+</section>
+
+            <section class="quick-add-card">
+                <div class="quick-add-label">Quick Add</div>
+                <div class="quick-add-row">
+                    <input class="quick-input" placeholder="New task..." />
+                    <button class="btn-add">Add</button>
+                </div>
+                <div class="quick-tip">Press <strong>Enter</strong> to add quickly.</div>
+            </section>
         </section>
+
+        <!-- Right column
+        <section class="right-column">
+
+
+        </section>
+        -->
 
     </main>
 </div>
@@ -189,6 +193,79 @@
             <button type="button" class="btn-pill secondary" data-action="cancel">Cancel</button>
             <button type="button" class="btn-pill primary" data-action="confirm">Start</button>
         </div>
+    </div>
+</div>
+
+<!-- Time's up modal -->
+<div class="timer-modal-backdrop" id="timerEndModal">
+    <div class="timer-modal">
+        <h2 class="timer-modal-title">Time’s up! ⏰</h2>
+        <p class="timer-modal-text">Did you get everything done?</p>
+
+        <div class="timer-modal-actions timer-end-actions">
+            <button type="button" class="btn-pill secondary" id="timerEndYes">Yes!</button>
+            <button type="button"
+                    class="btn-pill primary timer-end-no"
+                    id="timerEndNo">
+                No :(
+            </button>
+        </div>
+
+        <!-- HINT pod obema gumboma -->
+        <p class="timer-end-hint">
+            We’ll start a new session at 50% of your last focus time.
+        </p>
+    </div>
+</div>
+
+
+<!-- Quick Add modal -->
+<div class="timer-modal-backdrop" id="quickAddModal">
+    <div class="timer-modal">
+        <h2 class="timer-modal-title">Let’s get it done!</h2>
+        <p class="timer-modal-text" id="quickAddTaskLabel">
+            <!-- Task name bo nastavljen iz JS -->
+        </p>
+
+        <div class="timer-modal-input-row">
+            <span class="timer-modal-input-label">Duration</span>
+        </div>
+
+        <div class="timer-modal-presets">
+            <button type="button" class="timer-preset-btn quickadd-preset" data-minutes="5">5 min</button>
+            <button type="button" class="timer-preset-btn quickadd-preset" data-minutes="10">10 min</button>
+            <button type="button" class="timer-preset-btn quickadd-preset" data-minutes="25">25 min</button>
+        </div>
+
+        <div class="timer-modal-input-row">
+            <input type="number" id="quickAddMinutesInput" min="1" max="180" value="25" />
+            <span class="timer-modal-input-label">minutes</span>
+        </div>
+
+        <div class="timer-modal-input-row" style="margin-top: 10px;">
+            <span class="timer-modal-input-label">Subject</span>
+            <select id="quickAddSubject">
+                <option value="">Select subject…</option>
+                <option value="AIPS1 Exam">Subject1</option>
+                <option value="UI Exam">Subject2</option>
+                <!-- lahko dodaš svoje predmete -->
+            </select>
+        </div>
+
+        <div class="timer-modal-actions">
+            <button type="button" class="btn-pill secondary" id="quickAddCancel">Cancel</button>
+            <button type="button" class="btn-pill primary" id="quickAddConfirm">Save task</button>
+        </div>
+    </div>
+</div>
+<!-- Empty task error modal -->
+<div class="timer-modal-backdrop" id="quickAddErrorModal">
+    <div class="timer-modal">
+        <button type="button" class="modal-close-btn" id="quickAddErrorClose">✕</button>
+        <h2 class="timer-modal-title">Oops!</h2>
+        <p class="timer-modal-text" id="quickAddErrorText">
+            You need to add a task description first...
+        </p>
     </div>
 </div>
 
