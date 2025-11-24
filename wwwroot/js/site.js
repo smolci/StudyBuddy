@@ -39,6 +39,10 @@
         // Modal za nastavitev časa
         const modalBackdrop = document.getElementById("timerModal");
         const minutesInput = document.getElementById("timerMinutesInput");
+        const subjectSelect = document.getElementById("timerSubjectSelect");
+        const subjectLabel = document.getElementById("timerSubjectLabel");
+        let currentSubjectName = "";
+
         const presetButtons = modalBackdrop
             ? modalBackdrop.querySelectorAll(".timer-preset-btn")
             : [];
@@ -109,6 +113,11 @@
 
             function showModal() {
                 modalBackdrop.classList.add("is-visible");
+
+                if (subjectSelect) {
+                    subjectSelect.value = currentSubjectName || "";
+                }
+
                 setTimeout(() => {
                     minutesInput.focus();
                     minutesInput.select();
@@ -191,6 +200,14 @@
                 startBtn.textContent = "Start";
                 timerCircle.style.setProperty("--timer-progress", "0deg");
                 timerDisplay.textContent = "00:00";
+                currentSubjectName = "";
+                    if (subjectLabel) {
+                        subjectLabel.textContent = "";
+                        subjectLabel.classList.remove("is-visible");
+                    }
+                    if (subjectSelect) {
+                        subjectSelect.value = "";
+                    }
             });
 
             // Modal za nastavitev časa – Confirm
@@ -203,6 +220,20 @@
                     return;
                 }
 
+                // ------- SUBJECT PICK -------
+                currentSubjectName = subjectSelect ? subjectSelect.value.trim() : "";
+
+                if (subjectLabel) {
+                    if (currentSubjectName) {
+                        subjectLabel.textContent = currentSubjectName;
+                        subjectLabel.classList.add("is-visible");
+                    } else {
+                        subjectLabel.textContent = "";
+                        subjectLabel.classList.remove("is-visible");
+                    }
+                }
+                // ----------------------------
+
                 sessionTotalSeconds = Math.round(minutes * 60);
                 remainingSeconds = sessionTotalSeconds;
 
@@ -211,6 +242,7 @@
                 hideModal();
                 beginCountdown();
             });
+
 
             // Cancel setup modal
             modalCancel.addEventListener("click", () => {
@@ -448,15 +480,62 @@
         }
     }
 
-    // Add Subject
-    const showBtn = document.getElementById("showInputBtn");
-    const form = document.getElementById("addSubjectForm");
+    // --------------------------------------------------------
+// ADD SUBJECT MODAL
+// --------------------------------------------------------
+const showBtn = document.getElementById("showInputBtn");
 
-    if (showBtn && form) {
-        showBtn.addEventListener("click", function () {
-            form.classList.toggle('d-none');
-            const input = form.querySelector('input[name="subjectName"]');
-            if (input) input.focus();
-        });
-    }
+const addSubjectModal = document.getElementById("addSubjectModal");
+const addSubjectClose = document.getElementById("addSubjectClose");
+const addSubjectCancel = document.getElementById("addSubjectCancel");
+const addSubjectInput = document.getElementById("addSubjectInput");
+const addSubjectModalForm = document.getElementById("addSubjectModalForm");
+
+function showAddSubjectModal() {
+    if (!addSubjectModal) return;
+    addSubjectModal.classList.add("is-visible");
+
+    setTimeout(() => {
+        if (addSubjectInput) {
+            addSubjectInput.focus();
+            addSubjectInput.select();
+        }
+    }, 10);
+}
+
+function hideAddSubjectModal() {
+    if (!addSubjectModal) return;
+    addSubjectModal.classList.remove("is-visible");
+}
+
+if (showBtn) {
+    showBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        showAddSubjectModal();
+    });
+}
+
+if (addSubjectClose) addSubjectClose.addEventListener("click", hideAddSubjectModal);
+if (addSubjectCancel) addSubjectCancel.addEventListener("click", hideAddSubjectModal);
+
+// klik na backdrop zapre modal
+if (addSubjectModal) {
+    addSubjectModal.addEventListener("click", (e) => {
+        if (e.target === addSubjectModal) hideAddSubjectModal();
+    });
+}
+
+// validacija praznega inputa (uporabi tvoj global showError)
+if (addSubjectModalForm) {
+    addSubjectModalForm.addEventListener("submit", (e) => {
+        const name = addSubjectInput ? addSubjectInput.value.trim() : "";
+        if (!name) {
+            e.preventDefault();
+            showError("Please enter a subject name.");
+            return;
+        }
+        hideAddSubjectModal();
+    });
+}
+
 });

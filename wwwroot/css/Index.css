@@ -38,6 +38,14 @@ body {
     color: var(--text-main);
 }
 
+ .divline{
+    width: 112px;
+    height: 47px;
+    border-bottom: 1px solid black;
+    position: absolute;
+    color: #65303a
+}
+
 .app-shell {
     min-height: 100vh;
     display: flex;
@@ -312,7 +320,7 @@ body {
 /* Timer Card ------------------------------------------------------ */
 
 .timer-card {
-
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -396,6 +404,52 @@ body {
 
     /* Time's up modal extras ------------------------------------------ */
 }
+/* ---------- Timer subject label (zgoraj levo) ---------- */
+.timer-subject-label {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    color: var(--text-muted);
+    background: #fff3ed;
+    border: 1px solid var(--border-soft);
+    padding: 3px 8px;
+    border-radius: 999px;
+
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.timer-subject-label.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ---------- Timer modal dropdown ---------- */
+#timerSubjectSelect {
+    flex: 1;
+    padding: 8px 10px;
+
+    border-radius: 999px;
+    border: 1px solid var(--border-soft);
+    background: #fff;
+
+    font-size: 13px;
+    color: var(--text-main);
+    outline: none;
+}
+
+#timerSubjectSelect:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(243, 158, 96, 0.25);
+}
+
 
 .timer-end-actions {
     display: flex;
@@ -463,6 +517,25 @@ body {
     font-size: 11px;
     color: var(--text-muted);
     margin-top: 2px;
+}
+
+/* Add Subject modal input */
+#addSubjectInput {
+    width: 100%;
+    padding: 9px 12px;
+
+    border-radius: 999px;
+    border: 1px solid var(--border-soft);
+    background: #fff;
+
+    font-size: 14px;
+    color: var(--text-main);
+    outline: none;
+}
+
+#addSubjectInput:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(243, 158, 96, 0.25);
 }
 
 
