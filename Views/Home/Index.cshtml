@@ -75,8 +75,9 @@
                         <div class="chip">@subject.Name</div>
                     }
                 </div>
+
                 <div id="addSubjectChip" class="m-1">
-                    <button id="showInputBtn" type="button" class="btn btn-primary rounded-circle" style="width:40px; height:40px; padding:0;">+</button>
+                    <button id="showInputBtn" type="button" class="btn btn-primary rounded-circle" style="width:30px; height:30px; padding: 0;">+</button>
                     <form id="addSubjectForm" asp-action="AddSubject" method="post" class="d-none">
                         <input type="text" name="subjectName" placeholder="Ime predmeta" class="form-control mb-1" style="display:inline-block; width:auto;" />
                         <button type="submit" class="btn btn-success btn-sm">Dodaj</button>
@@ -107,10 +108,11 @@
                 </div>
             </section>
                 <div class="timer-card">
-                    <div class="timer-circle">
-                        <div class="timer-inner">
-                            00:00
-                        </div>
+                    <div class="timer-subject-label" id="timerSubjectLabel"></div>
+                        <div class="timer-circle">
+                            <div class="timer-inner">
+                                00:00
+                            </div>
                     </div>
                     <div class="timer-actions">
                         <button class="btn-pill primary">Start</button>
@@ -197,6 +199,16 @@
             <button type="button" class="timer-preset-btn" data-minutes="15">15 min</button>
             <button type="button" class="timer-preset-btn" data-minutes="25">25 min</button>
         </div>
+        <div class="timer-modal-input-row" style="margin-top: 10px;">
+            <span class="timer-modal-input-label">Subject</span>
+            <select id="timerSubjectSelect">
+                <option value="">Select subject…</option>
+                @foreach (var subject in Model)
+                {
+                    <option value="@subject.Name">@subject.Name</option>
+                }
+            </select>
+        </div>
 
         <div class="timer-modal-actions">
             <button type="button" class="btn-pill secondary" data-action="cancel">Cancel</button>
@@ -277,6 +289,33 @@
         </p>
     </div>
 </div>
+<!-- Add Subject modal -->
+<div class="timer-modal-backdrop" id="addSubjectModal">
+    <div class="timer-modal">
+        <button type="button" class="modal-close-btn" id="addSubjectClose">✕</button>
+
+        <h2 class="timer-modal-title">Even more work? Really?</h2>
+        <p class="timer-modal-text">Add a new subject to keep things organized.</p>
+
+        <form id="addSubjectModalForm" asp-action="AddSubject" method="post">
+            <div class="timer-modal-input-row">
+                <input
+                    type="text"
+                    id="addSubjectInput"
+                    name="subjectName"
+                    placeholder="Subject name..."
+                    autocomplete="off"
+                />
+            </div>
+
+            <div class="timer-modal-actions">
+                <button type="button" class="btn-pill secondary" id="addSubjectCancel">Cancel</button>
+                <button type="submit" class="btn-pill primary">Add subject</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 
 <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
