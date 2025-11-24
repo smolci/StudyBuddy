@@ -20,6 +20,10 @@ namespace StudyBuddy.Data
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<Subject>()
+                .HasIndex(s => new { s.UserId, s.Name })
+                .IsUnique();
+
             builder.Entity<StudySession>()
                 .HasOne(s => s.Subject)
                 .WithMany(su => su.StudySessions)

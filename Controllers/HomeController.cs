@@ -4,6 +4,7 @@ using StudyBuddy.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using StudyBuddy.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace StudyBuddy.Controllers;
 
@@ -33,17 +34,26 @@ public class HomeController : Controller
     {
         var user = await _userManager.GetUserAsync(User);
 
-        if (!string.IsNullOrWhiteSpace(subjectName))
-        {
-            var subject = new Subject
-                {
-                    Name = subjectName,
-                    UserId = user.Id
-                };
+        if (string.IsNullOrWhiteSpace(subjectName))
+            return RedirectToAction("Index");
 
-                _context.Subjects.Add(subject);
-                await _context.SaveChangesAsync();
+        bool exists = await _context.Subjects
+            .AnyAsync(s => s.UserId == user.Id && s.Name == subjectName);
+
+        if (exists)
+        {
+            return RedirectToAction("Index");
         }
+
+        var subject = new Subject
+            {
+                Name = subjectName,
+                UserId = user.Id
+            };
+
+        _context.Subjects.Add(subject);
+            await _context.SaveChangesAsync();
+
         return RedirectToAction("Index");
     }
 
