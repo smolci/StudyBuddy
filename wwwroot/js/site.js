@@ -447,4 +447,16 @@
             });
         }
     }
+
+    // Add Subject
+    const showBtn = document.getElementById("showInputBtn");
+    const form = document.getElementById("addSubjectForm");
+
+    if (showBtn && form) {
+        showBtn.addEventListener("click", function () {
+            form.classList.toggle('d-none');
+            const input = form.querySelector('input[name="subjectName"]');
+            if (input) input.focus();
+        });
+    }
 });

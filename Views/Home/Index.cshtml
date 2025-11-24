@@ -70,8 +70,17 @@
 
                 <div class="sidebar-section-title">Subjects</div>
                 <div class="project-chips">
-                    <span class="chip">Subject1</span>
-                    <span class="chip chip-alt">Subject2</span>
+                    @foreach (var subject in Model)
+                    {
+                        <div class="chip">@subject.Name</div>
+                    }
+                </div>
+                <div id="addSubjectChip" class="m-1">
+                    <button id="showInputBtn" type="button" class="btn btn-primary rounded-circle" style="width:40px; height:40px; padding:0;">+</button>
+                    <form id="addSubjectForm" asp-action="AddSubject" method="post" class="d-none">
+                        <input type="text" name="subjectName" placeholder="Ime predmeta" class="form-control mb-1" style="display:inline-block; width:auto;" />
+                        <button type="submit" class="btn btn-success btn-sm">Dodaj</button>
+                    </form>
                 </div>
             </div>
         </aside>
