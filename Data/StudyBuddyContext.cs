@@ -16,6 +16,8 @@ namespace StudyBuddy.Data
         public DbSet<QuizQuestion> QuizQuestions { get; set; }
         public DbSet<StudySession> StudySessions { get; set; }
 
+        public DbSet<StudyTask> StudyTasks { get; set;}
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -41,6 +43,18 @@ namespace StudyBuddy.Data
                 .WithMany(q => q.QuizQuestions)
                 .HasForeignKey(qq => qq.QuestionId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<StudyTask>()
+                .HasOne(t => t.Subject)
+                .WithMany(s => s.StudyTasks)            
+                .HasForeignKey(t => t.SubjectId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            builder.Entity<StudyTask>()
+                .HasOne(t => t.User)
+                .WithMany(u => u.StudyTasks)            
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Restrict); 
 
         }
     }

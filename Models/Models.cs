@@ -14,6 +14,8 @@ namespace StudyBuddy.Models
         public virtual ICollection<Subject> Subjects { get; set; } = new List<Subject>();
         public virtual ICollection<StudySession> StudySessions { get; set; } = new List<StudySession>();
         public virtual ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
+
+        public virtual ICollection<StudyTask> StudyTasks { get; set; } = new List<StudyTask>();
     }
 
     public class Subject
@@ -30,6 +32,8 @@ namespace StudyBuddy.Models
 
         public virtual ICollection<Topic> Topics { get; set; } = new List<Topic>();
         public virtual ICollection<StudySession> StudySessions { get; set; } = new List<StudySession>();
+
+        public virtual ICollection<StudyTask> StudyTasks { get; set; } = new List<StudyTask>();
     }
 
     public class Topic
@@ -108,6 +112,23 @@ namespace StudyBuddy.Models
 
         [Required]
         public int SubjectId { get; set; }
+        public virtual Subject Subject { get; set; }
+    }
+
+    public class StudyTask
+    {
+        [Key]
+        public int TaskId { get; set; }           
+
+        [Required]
+        public string Description { get; set; }   
+
+        [Required]
+        public string UserId { get; set; }        
+        public virtual User User { get; set; }
+
+        [Required]
+        public int SubjectId { get; set; }      
         public virtual Subject Subject { get; set; }
     }
 }
