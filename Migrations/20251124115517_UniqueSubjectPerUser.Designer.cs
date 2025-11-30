@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudyBuddy.Data;
 
@@ -11,9 +12,11 @@ using StudyBuddy.Data;
 namespace StudyBuddy.Migrations
 {
     [DbContext(typeof(StudyBuddyContext))]
-    partial class StudyBuddyContextModelSnapshot : ModelSnapshot
+    [Migration("20251124115517_UniqueSubjectPerUser")]
+    partial class UniqueSubjectPerUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -261,34 +264,6 @@ namespace StudyBuddy.Migrations
                     b.ToTable("StudySessions");
                 });
 
-            modelBuilder.Entity("StudyBuddy.Models.StudyTask", b =>
-                {
-                    b.Property<int>("TaskId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TaskId"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SubjectId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("TaskId");
-
-                    b.HasIndex("SubjectId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("StudyTasks");
-                });
-
             modelBuilder.Entity("StudyBuddy.Models.Subject", b =>
                 {
                     b.Property<int>("SubjectId")
@@ -519,25 +494,6 @@ namespace StudyBuddy.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("StudyBuddy.Models.StudyTask", b =>
-                {
-                    b.HasOne("StudyBuddy.Models.Subject", "Subject")
-                        .WithMany("StudyTasks")
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("StudyBuddy.Models.User", "User")
-                        .WithMany("StudyTasks")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Subject");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("StudyBuddy.Models.Subject", b =>
                 {
                     b.HasOne("StudyBuddy.Models.User", "User")
@@ -574,8 +530,6 @@ namespace StudyBuddy.Migrations
                 {
                     b.Navigation("StudySessions");
 
-                    b.Navigation("StudyTasks");
-
                     b.Navigation("Topics");
                 });
 
@@ -589,8 +543,6 @@ namespace StudyBuddy.Migrations
                     b.Navigation("Quizzes");
 
                     b.Navigation("StudySessions");
-
-                    b.Navigation("StudyTasks");
 
                     b.Navigation("Subjects");
                 });

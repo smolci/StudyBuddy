@@ -1,9 +1,11 @@
 ﻿@model IEnumerable<Subject>
 @{
     Layout = "/Views/Shared/_Layout.cshtml";
+    Layout = "/Views/Shared/_Layout.cshtml";
 }
 <!DOCTYPE html>
 <html lang="en">
+
 
 <head>
     <meta charset="utf-8" />
@@ -11,50 +13,24 @@
     <link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
 </head>
 
+
 <body>
     <div class="app-shell">
-
-        <header class="topbar">
-            <div class="topbar-left">
-                <div class="topbar-avatar">SB</div>
-                <div class="topbar-title">
-                    <span>Study Buddy</span>
-                    <span>
-                        @using Microsoft.AspNetCore.Identity
-                        @inject UserManager<User> UserManager
-                        @inject SignInManager<User> SignInManager
-
-                        @if (SignInManager.IsSignedIn(User))
-                        {
-                            var currentUser = await UserManager.GetUserAsync(User);
-                            var displayName = currentUser?.FirstName ?? currentUser?.UserName ??
-                            UserManager.GetUserName(User) ?? "user";
-                            <text>Welcome back, @displayName!</text>
-                        }
-                        else
-                        {
-                            <text>Welcome, guest!</text>
-                        }
-                    </span>
-                </div>
-            </div>
-            <div class="topbar-actions">
-                <partial name="_LoginPartial" />
-            </div>
-        </header>
-
         <main class="main-layout">
-
             <!-- Sidebar -->
             <aside class="sidebar">
                 <div>
                     <div class="sidebar-section-title">Navigation</div>
                     <ul class="nav-list">
-                        <li class="nav-item active">
+                        <li class="nav-item">
                             <span class="icon">🏠</span>
                             <span>Dashboard</span>
                         </li>
                         <li class="nav-item">
+                            <span class="icon">⏱️</span>
+                            <span>Pomodoro</span>
+                        </li>
+                        <li class="nav-item active">
                             <span class="icon">✅</span>
                             <span>Tasks</span>
                         </li>
@@ -63,12 +39,11 @@
                             <span>Stats</span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index">
-                                <span class="icon">⚙️</span>
-                                <span>Settings</span>
-                            </a>
+                            <span class="icon">⚙️</span>
+                            <span>Settings</span>
                         </li>
                     </ul>
+
                     <div class="sidebar-section-title">Subjects</div>
                     <div class="project-chips">
                         @foreach (var subject in Model)
@@ -77,6 +52,17 @@
                         }
                     </div>
 
+                    <div id="addSubjectChip" class="m-1">
+                        <button id="showInputBtn" type="button" class="btn btn-primary rounded-circle"
+                            style="width:30px; height:30px; padding: 0;">+</button>
+                        <form id="addSubjectForm" asp-action="AddSubject" method="post" class="d-none">
+                            <input type="text" name="subjectName" placeholder="Ime predmeta" class="form-control mb-1"
+                                style="display:inline-block; width:auto;" />
+                            <button type="submit" class="btn btn-success btn-sm">Dodaj</button>
+                        </form>
+                    </div>
+                </div>
+            </aside>
                     <div id="addSubjectChip" class="m-1">
                         <button id="showInputBtn" type="button" class="btn btn-primary rounded-circle"
                             style="width:30px; height:30px; padding: 0;">+</button>
@@ -112,10 +98,40 @@
                     </section>
                     <div class="timer-card">
                         <div class="timer-subject-label" id="timerSubjectLabel"></div>
+            <!-- Center column -->
+            <section class="center-column">
+                <section class="focus-card">
+                    <section class="weekly-card">
+                        <div class="weekly-header">
+                            <div>
+                                <div class="weekly-label">Weekly focus</div>
+                                <div class="weekly-time">6h 40m</div>
+                            </div>
+                            <div class="weekly-change">+12%</div>
+                        </div>
+                        <div class="weekly-chart">
+                            <div class="chart-bar"></div>
+                            <div class="chart-bar"></div>
+                            <div class="chart-bar"></div>
+                            <div class="chart-bar"></div>
+                            <div class="chart-bar"></div>
+                            <div class="chart-bar"></div>
+                            <div class="chart-bar"></div>
+                        </div>
+                    </section>
+                    <div class="timer-card">
+                        <div class="timer-subject-label" id="timerSubjectLabel"></div>
                         <div class="timer-circle">
                             <div class="timer-inner">
                                 00:00
                             </div>
+                        </div>
+                        <div class="timer-actions">
+                            <button class="btn-pill primary">Start</button>
+                            <button class="btn-pill secondary">Reset</button>
+                        </div>
+                    </div>
+                </section>
                         </div>
                         <div class="timer-actions">
                             <button class="btn-pill primary">Start</button>
@@ -159,12 +175,36 @@
         <div class="timer-modal">
             <h2 class="timer-modal-title">Set focus time</h2>
             <p class="timer-modal-text">How many minutes do you want to focus?</p>
+    <!-- Timer modal -->
+    <div class="timer-modal-backdrop" id="timerModal">
+        <div class="timer-modal">
+            <h2 class="timer-modal-title">Set focus time</h2>
+            <p class="timer-modal-text">How many minutes do you want to focus?</p>
 
             <div class="timer-modal-input-row">
                 <input type="number" id="timerMinutesInput" min="1" max="180" value="25" />
                 <span class="timer-modal-input-label">minutes</span>
             </div>
+            <div class="timer-modal-input-row">
+                <input type="number" id="timerMinutesInput" min="1" max="180" value="25" />
+                <span class="timer-modal-input-label">minutes</span>
+            </div>
 
+            <div class="timer-modal-presets">
+                <button type="button" class="timer-preset-btn" data-minutes="5">5 min</button>
+                <button type="button" class="timer-preset-btn" data-minutes="15">15 min</button>
+                <button type="button" class="timer-preset-btn" data-minutes="25">25 min</button>
+            </div>
+            <div class="timer-modal-input-row" style="margin-top: 10px;">
+                <span class="timer-modal-input-label">Subject</span>
+                <select id="timerSubjectSelect">
+                    <option value="">Select subject…</option>
+                    @foreach (var subject in Model)
+                    {
+                        <option value="@subject.Name">@subject.Name</option>
+                    }
+                </select>
+            </div>
             <div class="timer-modal-presets">
                 <button type="button" class="timer-preset-btn" data-minutes="5">5 min</button>
                 <button type="button" class="timer-preset-btn" data-minutes="15">15 min</button>
@@ -187,7 +227,18 @@
             </div>
         </div>
     </div>
+            <div class="timer-modal-actions">
+                <button type="button" class="btn-pill secondary" data-action="cancel">Cancel</button>
+                <button type="button" class="btn-pill primary" data-action="confirm">Start</button>
+            </div>
+        </div>
+    </div>
 
+    <!-- Time's up modal -->
+    <div class="timer-modal-backdrop" id="timerEndModal">
+        <div class="timer-modal">
+            <h2 class="timer-modal-title">Time’s up! ⏰</h2>
+            <p class="timer-modal-text">Did you get everything done?</p>
     <!-- Time's up modal -->
     <div class="timer-modal-backdrop" id="timerEndModal">
         <div class="timer-modal">
@@ -200,7 +251,19 @@
                     No :(
                 </button>
             </div>
+            <div class="timer-modal-actions timer-end-actions">
+                <button type="button" class="btn-pill secondary" id="timerEndYes">Yes!</button>
+                <button type="button" class="btn-pill primary timer-end-no" id="timerEndNo">
+                    No :(
+                </button>
+            </div>
 
+            <!-- HINT pod obema gumboma -->
+            <p class="timer-end-hint">
+                We’ll start a new session at 50% of your last focus time.
+            </p>
+        </div>
+    </div>
             <!-- HINT pod obema gumboma -->
             <p class="timer-end-hint">
                 We’ll start a new session at 50% of your last focus time.
@@ -216,7 +279,17 @@
             <p class="timer-modal-text" id="quickAddTaskLabel">
                 <!-- Task name bo nastavljen iz JS -->
             </p>
+    <!-- Quick Add modal -->
+    <div class="timer-modal-backdrop" id="quickAddModal">
+        <div class="timer-modal">
+            <h2 class="timer-modal-title">Let’s get it done!</h2>
+            <p class="timer-modal-text" id="quickAddTaskLabel">
+                <!-- Task name bo nastavljen iz JS -->
+            </p>
 
+            <div class="timer-modal-input-row">
+                <span class="timer-modal-input-label">Duration</span>
+            </div>
             <div class="timer-modal-input-row">
                 <span class="timer-modal-input-label">Duration</span>
             </div>
@@ -226,7 +299,16 @@
                 <button type="button" class="timer-preset-btn quickadd-preset" data-minutes="10">10 min</button>
                 <button type="button" class="timer-preset-btn quickadd-preset" data-minutes="25">25 min</button>
             </div>
+            <div class="timer-modal-presets">
+                <button type="button" class="timer-preset-btn quickadd-preset" data-minutes="5">5 min</button>
+                <button type="button" class="timer-preset-btn quickadd-preset" data-minutes="10">10 min</button>
+                <button type="button" class="timer-preset-btn quickadd-preset" data-minutes="25">25 min</button>
+            </div>
 
+            <div class="timer-modal-input-row">
+                <input type="number" id="quickAddMinutesInput" min="1" max="180" value="25" />
+                <span class="timer-modal-input-label">minutes</span>
+            </div>
             <div class="timer-modal-input-row">
                 <input type="number" id="quickAddMinutesInput" min="1" max="180" value="25" />
                 <span class="timer-modal-input-label">minutes</span>
@@ -267,7 +349,14 @@
 
             <h2 class="timer-modal-title">Even more work? Really?</h2>
             <p class="timer-modal-text">Add a new subject to keep things organized.</p>
+            <h2 class="timer-modal-title">Even more work? Really?</h2>
+            <p class="timer-modal-text">Add a new subject to keep things organized.</p>
 
+            <form id="addSubjectModalForm" asp-action="AddSubject" method="post">
+                <div class="timer-modal-input-row">
+                    <input type="text" id="addSubjectInput" name="subjectName" placeholder="Subject name..."
+                        autocomplete="off" />
+                </div>
             <form id="addSubjectModalForm" asp-action="AddSubject" method="post">
                 <div class="timer-modal-input-row">
                     <input type="text" id="addSubjectInput" name="subjectName" placeholder="Subject name..."
@@ -288,6 +377,8 @@
     </script>
 
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
+
 
 </html>
