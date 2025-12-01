@@ -1,9 +1,9 @@
-﻿@model IEnumerable<Subject>
-@{
+﻿@{
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <title>Study Buddy</title>
@@ -17,28 +17,34 @@
             <aside class="sidebar">
                 <div>
                     <div class="sidebar-section-title">Navigation</div>
-                    <ul class="nav-list">
-                        <li class="nav-item">
+
+                    <li class="nav-item active">
+                        <a asp-controller="Home" asp-action="Index" class="nav-link">
                             <span class="icon">🏠</span>
                             <span>Dashboard</span>
-                        </li>
-                        <li class="nav-item">
-                            <span class="icon">⏱️</span>
-                            <span>Pomodoro</span>
-                        </li>
-                        <li class="nav-item active">
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a asp-controller="StudyTasks" asp-action="Index" class="nav-link">
                             <span class="icon">✅</span>
                             <span>Tasks</span>
-                        </li>
-                        <li class="nav-item">
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a asp-controller="Stats" asp-action="Index" class="nav-link">
                             <span class="icon">📊</span>
                             <span>Stats</span>
-                        </li>
-                        <li class="nav-item">
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a asp-area="Identity" asp-page="/Account/Manage/Index" class="nav-link">
                             <span class="icon">⚙️</span>
                             <span>Settings</span>
-                        </li>
-                    </ul>
+                        </a>
+                    </li>
 
                     <div class="sidebar-section-title">Subjects</div>
                     <div class="project-chips">
@@ -50,11 +56,10 @@
 
                     <div id="addSubjectChip" class="m-1">
                         <button id="showInputBtn" type="button" class="btn btn-primary rounded-circle"
-                                style="width:30px; height:30px; padding: 0;">+</button>
+                            style="width:30px; height:30px; padding: 0;">+</button>
                         <form id="addSubjectForm" asp-action="AddSubject" method="post" class="d-none">
-                            <input type="text" name="subjectName" placeholder="Ime predmeta"
-                                   class="form-control mb-1"
-                                   style="display:inline-block; width:auto;" />
+                            <input type="text" name="subjectName" placeholder="Ime predmeta" class="form-control mb-1"
+                                style="display:inline-block; width:auto;" />
                             <button type="submit" class="btn btn-success btn-sm">Dodaj</button>
                         </form>
                     </div>
@@ -179,9 +184,7 @@
     <div class="timer-modal-backdrop" id="quickAddModal">
         <div class="timer-modal">
             <h2 class="timer-modal-title">Let’s get it done!</h2>
-            <p class="timer-modal-text" id="quickAddTaskLabel">
-                <!-- Task name bo nastavljen iz JS -->
-            </p>
+            <p class="timer-modal-text" id="quickAddTaskLabel"></p>
 
             <div class="timer-modal-input-row">
                 <span class="timer-modal-input-label">Duration</span>
@@ -238,7 +241,7 @@
             <form id="addSubjectModalForm" asp-action="AddSubject" method="post">
                 <div class="timer-modal-input-row">
                     <input type="text" id="addSubjectInput" name="subjectName" placeholder="Subject name..."
-                           autocomplete="off" />
+                        autocomplete="off" />
                 </div>
 
                 <div class="timer-modal-actions">
@@ -257,4 +260,5 @@
 
     <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
+
 </html>

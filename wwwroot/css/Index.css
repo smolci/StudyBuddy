@@ -77,6 +77,7 @@ body {
 
 .nav-item.a {
     text-decoration: none !important;
+
 }
 
 .nav-item span.icon {
@@ -103,6 +104,17 @@ body {
     text-decoration: none;
     color: #8f4947;          /* ali tvoja accent barva */
     background-color: rgba(255,255,255,0.06); /* če imaš tak stil sidebara */
+}
+
+/* tekst v nav linku ima nežen scale efekt */
+.nav-item .nav-link span:not(.icon) {
+    transition: transform 0.12s ease, color 0.12s ease;
+    transform-origin: left center;
+}
+
+.nav-item .nav-link:hover span:not(.icon) {
+    transform: scale(1.04);   /* malo povečaj */
+    color: #8f4947;           /* rahlo bolj temna/klikljiva barva */
 }
 
 

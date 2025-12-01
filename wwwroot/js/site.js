@@ -1,6 +1,4 @@
-﻿// Prevent double initialization if site.js is included more than once
-if (window.studyBuddyInitialized) {
-    // already initialized, do nothing
+﻿if (window.studyBuddyInitialized) {
 } else {
     window.studyBuddyInitialized = true;
 
@@ -219,14 +217,11 @@ if (window.studyBuddyInitialized) {
                     }, 1000);
                 }
 
-                // Start / Pause
-                startBtn.addEventListener("click", () => {
++                startBtn.addEventListener("click", () => {
                     if (!running) {
                         if (!sessionTotalSeconds) {
-                            // prvič nastavljamo čas
-                            showModal();
++                            showModal();
                         } else {
-                            // že imamo čas
                             if (remainingSeconds <= 0) {
                                 remainingSeconds = sessionTotalSeconds;
                                 updateDisplay();
@@ -241,7 +236,7 @@ if (window.studyBuddyInitialized) {
                     }
                 });
 
-                // Reset (zapišemo delno sejo, če je čas tekel)
+                // Reset 
                 resetBtn.addEventListener("click", () => {
                     const elapsedMinutes = getElapsedMinutes();
                     if (elapsedMinutes > 0) {
@@ -251,7 +246,7 @@ if (window.studyBuddyInitialized) {
                     resetAllTimerState(true);
                 });
 
-                // Modal Confirm – nastavi novo sejo
+                // Modal Confirm 
                 modalConfirm.addEventListener("click", () => {
                     const value = minutesInput.value.trim().replace(",", ".");
                     const minutes = parseFloat(value);
@@ -282,7 +277,6 @@ if (window.studyBuddyInitialized) {
                     beginCountdown();
                 });
 
-                // Cancel setup modal
                 modalCancel.addEventListener("click", () => {
                     hideModal();
                 });
@@ -297,7 +291,6 @@ if (window.studyBuddyInitialized) {
                     });
                 });
 
-                // Enter v inputu = confirm
                 minutesInput.addEventListener("keydown", (e) => {
                     if (e.key === "Enter") {
                         e.preventDefault();
@@ -305,9 +298,7 @@ if (window.studyBuddyInitialized) {
                     }
                 });
 
-                // ---------- "Time's up" modal logika ----------
 
-                // Yes -> zapišemo celotno sejo in resetiramo
                 endYesBtn.addEventListener("click", () => {
                     if (sessionTotalSeconds && sessionTotalSeconds > 0) {
                         const fullMinutes = sessionTotalSeconds / 60;
@@ -338,7 +329,7 @@ if (window.studyBuddyInitialized) {
                     beginCountdown();
                 });
 
-                // hover na "No" pokaže hint
+                // hover No hint
                 endNoBtn.addEventListener("mouseenter", () => {
                     endHint.classList.add("is-visible");
                 });
@@ -388,7 +379,6 @@ if (window.studyBuddyInitialized) {
                 ? quickAddModal.querySelectorAll(".quickadd-preset")
                 : [];
 
-            // 🔹 opis taska, ki ga hranimo med modalom
             let currentTaskNameForModal = "";
 
             if (
@@ -423,7 +413,6 @@ if (window.studyBuddyInitialized) {
                 quickAddBtn.addEventListener("click", () => {
                     const taskName = quickInput.value.trim();
                     if (!taskName) {
-                        // edini kraj, kjer pokažemo ta popup
                         showError("You need to add a task description first...");
                         return;
                     }
@@ -458,11 +447,10 @@ if (window.studyBuddyInitialized) {
                     hideQuickAddModal();
                 });
 
-                // Confirm – doda task v Today’s Tasks
+                // dodamo task v daily tasks
                 quickAddConfirm.addEventListener("click", () => {
                     const rawTaskName = (currentTaskNameForModal || "").trim();
 
-                    // Če se je slučajno izgubilo ime, samo zapremo modal brez errorja
                     if (!rawTaskName) {
                         hideQuickAddModal();
                         return;

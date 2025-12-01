@@ -31,7 +31,6 @@ namespace StudyBuddy.Data
                 .HasForeignKey(s => s.SubjectId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // N:N relacija Quiz <-> Question
             builder.Entity<QuizQuestion>()
                 .HasKey(qq => new { qq.QuizId, qq.QuestionId });
 
