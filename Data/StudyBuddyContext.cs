@@ -15,8 +15,7 @@ namespace StudyBuddy.Data
         public DbSet<Quiz> Quizzes { get; set; }
         public DbSet<QuizQuestion> QuizQuestions { get; set; }
         public DbSet<StudySession> StudySessions { get; set; }
-
-        public DbSet<StudyTask> StudyTasks { get; set;}
+        public DbSet<StudyTask> StudyTasks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

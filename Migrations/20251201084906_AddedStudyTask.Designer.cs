@@ -12,8 +12,8 @@ using StudyBuddy.Data;
 namespace StudyBuddy.Migrations
 {
     [DbContext(typeof(StudyBuddyContext))]
-    [Migration("20251130184805_addedStudyTask")]
-    partial class addedStudyTask
+    [Migration("20251201084906_AddedStudyTask")]
+    partial class AddedStudyTask
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -302,7 +302,7 @@ namespace StudyBuddy.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -310,7 +310,8 @@ namespace StudyBuddy.Migrations
 
                     b.HasKey("SubjectId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId", "Name")
+                        .IsUnique();
 
                     b.ToTable("Subjects");
                 });
