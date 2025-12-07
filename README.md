@@ -1,7 +1,7 @@
 # StudyBuddy
 
 ## Razvijalca
-Luka Karoli (63240138) in Aljaž Smole (6324029)
+Luka Karoli (63240138) in Aljaž Smole (63240293)
 
 ## Opis
 
@@ -24,7 +24,7 @@ Entitete: user, subject, topic, flashcard, quiz, question, study_session.
 # StudyBuddy
 
 ## Developers
-Luka Karoli (63240138) and Aljaž Smole (6324029)
+Luka Karoli (63240138) and Aljaž Smole (63240293)
 
 ## Description
 
