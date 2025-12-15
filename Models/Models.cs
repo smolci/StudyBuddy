@@ -26,9 +26,8 @@ namespace StudyBuddy.Models
         [Required]
         public string Name { get; set; }
 
-        [Required]
         public string UserId { get; set; }
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
 
         public virtual ICollection<Topic> Topics { get; set; } = new List<Topic>();
         public virtual ICollection<StudySession> StudySessions { get; set; } = new List<StudySession>();

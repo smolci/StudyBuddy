@@ -1,41 +1,68 @@
 @model IEnumerable<StudyBuddy.Models.Subject>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Subjects";
 }
 
-<h1>Index</h1>
+<link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.SubjectId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.SubjectId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.SubjectId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="center-column">
+    <div class="tasks-card">
+        <div class="card-title">SUBJECTS</div>
+
+        <h1 style="margin: 0 0 12px; font-size: 22px; color: var(--text-main);">
+            Your subjects
+        </h1>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="task-item" style="justify-content: flex-start;">
+                <div style="color: var(--text-muted); font-size: 14px;">
+                    No subjects yet.
+                </div>
+            </div>
+
+            <div style="margin-top: 12px;">
+                <a asp-action="Create" class="btn-add" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                    + Add subject
+                </a>
+            </div>
+        }
+        else
+        {
+            <ul class="task-list">
+                @foreach (var item in Model)
+                {
+                    <li class="task-item" style="align-items: center;">
+                        <div class="task-left" style="cursor: default;">
+                            <span style="font-weight:600;">@item.Name</span>
+                        </div>
+
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <a asp-action="Details" asp-route-id="@item.SubjectId"
+                               class="chip chip-alt" style="text-decoration:none;">
+                                Details
+                            </a>
+
+                            <a asp-action="Edit" asp-route-id="@item.SubjectId"
+                               class="chip" style="text-decoration:none;">
+                                Edit
+                            </a>
+
+                            <a asp-action="Delete" asp-route-id="@item.SubjectId"
+                               class="chip" style="text-decoration:none; background:#fde6d7; color:#6a373b;">
+                                Delete
+                            </a>
+                        </div>
+                    </li>
+                }
+            </ul>
+
+            <div style="margin-top: 14px;">
+                <a asp-action="Create" class="btn-add" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                    + Add subject
+                </a>
+            </div>
+        }
+    </div>
+</div>
