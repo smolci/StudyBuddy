@@ -1,0 +1,42 @@
+@model StudyBuddy.Models.StudyTask
+
+@{
+    ViewData["Title"] = "Delete Study Task";
+}
+
+<link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
+
+<div class="center-column">
+    <div class="tasks-card">
+        <div class="card-title">DELETE STUDY TASK</div>
+
+        <div class="auth-alert" style="margin-bottom: 12px;">
+            Are you sure you want to delete
+            <strong>@(Model?.Description ?? "this study task")</strong>?
+            This action can’t be undone.
+        </div>
+
+        <div class="auth-alert" style="margin-bottom: 14px;">
+            <strong>Warning:</strong> This task is associated with the subject 
+            <strong>@(Model?.Subject?.Name ?? "unknown")</strong> and user 
+            <strong>@(Model?.User?.Id ?? "unknown")</strong>.
+        </div>
+
+        <div class="divider"></div>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="TaskId" />
+
+            <div class="timer-modal-actions">
+                <button type="submit" class="btn-primary" style="background: #7c444f;">
+                    Delete
+                </button>
+
+                <a asp-action="Index" class="btn-secondary"
+                   style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -14,7 +14,6 @@ namespace StudyBuddy.Models
         public virtual ICollection<Subject> Subjects { get; set; } = new List<Subject>();
         public virtual ICollection<StudySession> StudySessions { get; set; } = new List<StudySession>();
         public virtual ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
-
         public virtual ICollection<StudyTask> StudyTasks { get; set; } = new List<StudyTask>();
     }
 
@@ -31,7 +30,6 @@ namespace StudyBuddy.Models
 
         public virtual ICollection<Topic> Topics { get; set; } = new List<Topic>();
         public virtual ICollection<StudySession> StudySessions { get; set; } = new List<StudySession>();
-
         public virtual ICollection<StudyTask> StudyTasks { get; set; } = new List<StudyTask>();
     }
 

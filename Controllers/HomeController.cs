@@ -27,7 +27,19 @@ public class HomeController : Controller
         var subjects = _context.Subjects
             .Where(s => s.UserId == user.Id)
             .ToList();
-        return View(subjects);
+
+        var tasks = await _context.StudyTasks
+            .Include(t => t.Subject)
+            .Where(t => t.UserId == user.Id)
+            .ToListAsync();
+
+        var model = new HomeViewModel
+        {
+            Subjects = subjects,
+            StudyTasks = tasks
+        };
+
+        return View(model);
     }
 
     public async Task<IActionResult> AddSubject(string subjectName)

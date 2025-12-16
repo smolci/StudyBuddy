@@ -1,0 +1,45 @@
+@model StudyBuddy.Models.StudyTask
+
+@{
+    ViewData["Title"] = "Create Study Task";
+}
+
+<link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
+
+<div class="center-column">
+    <div class="tasks-card">
+        <div class="card-title">CREATE STUDY TASK</div>
+
+        <form asp-controller="StudyTasks" asp-action="Create" method="post" class="auth-form">
+            @Html.AntiForgeryToken()
+
+            <div class="field">
+                <label asp-for="Description"></label>
+                <input asp-for="Description" class="input" placeholder="e.g. Read Chapter 5" />
+                <span asp-validation-for="Description" class="field-error"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="SubjectId"></label>
+                <select asp-for="SubjectId" class="input" asp-items="ViewBag.SubjectId">
+                    <option value="">Select Subject</option>
+                </select>
+                <span asp-validation-for="SubjectId" class="field-error"></span>
+            </div>
+
+            <div class="timer-modal-actions">
+                <button type="submit" class="btn-primary">Create</button>
+                <a asp-action="Index" class="btn-secondary"
+                   style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                    Back
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

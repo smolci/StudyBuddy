@@ -12,7 +12,7 @@ using StudyBuddy.Data;
 namespace StudyBuddy.Migrations
 {
     [DbContext(typeof(StudyBuddyContext))]
-    [Migration("20251201084906_AddedStudyTask")]
+    [Migration("20251216120940_AddedStudyTask")]
     partial class AddedStudyTask
     {
         /// <inheritdoc />

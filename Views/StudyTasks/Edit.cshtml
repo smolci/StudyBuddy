@@ -1,0 +1,47 @@
+@model StudyBuddy.Models.StudyTask
+
+@{
+    ViewData["Title"] = "Edit Study Task";
+}
+
+<link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
+
+<div class="center-column">
+    <div class="tasks-card">
+        <div class="card-title">EDIT STUDY TASK</div>
+
+        <div class="sidebar-section-title" style="margin-bottom: 12px;">
+            You may edit the details of this study task here
+        </div>
+
+        <form asp-action="Edit" method="post" class="auth-form">
+            @Html.AntiForgeryToken()
+            
+            <input type="hidden" asp-for="TaskId" />
+
+            <div class="field">
+                <label asp-for="Description"></label>
+                <input asp-for="Description" class="input" placeholder="Enter task description" />
+                <span asp-validation-for="Description" class="field-error"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="SubjectId"></label>
+                <select asp-for="SubjectId" class="input" asp-items="ViewBag.SubjectId"></select>
+                <span asp-validation-for="SubjectId" class="field-error"></span>
+            </div>
+
+            <div class="timer-modal-actions">
+                <button type="submit" class="btn-primary">Save</button>
+                <a asp-action="Index" class="btn-secondary"
+                   style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                    Back
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
