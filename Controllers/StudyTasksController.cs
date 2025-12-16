@@ -28,8 +28,15 @@ namespace StudyBuddy.Controllers
         // GET: StudyTasks
         public async Task<IActionResult> Index()
         {
-            var studyBuddyContext = _context.StudyTasks.Include(s => s.Subject).Include(s => s.User);
-            return View(await studyBuddyContext.ToListAsync());
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Challenge();
+
+            var userTasks = await _context.StudyTasks
+                .Include(t => t.Subject)
+                .Where(t => t.UserId == currentUser.Id)
+                .ToListAsync();
+
+            return View(userTasks);
         }
 
         // GET: StudyTasks/Details/5
