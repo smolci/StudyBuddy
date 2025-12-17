@@ -1,46 +1,61 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudyBuddy.Data;
 using StudyBuddy.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace StudyBuddy.Controllers
 {
     public class SubjectsController : Controller
     {
         private readonly StudyBuddyContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public SubjectsController(StudyBuddyContext context)
+        public SubjectsController(StudyBuddyContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
+
+        private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         // GET: Subjects
         public async Task<IActionResult> Index()
         {
-            var studyBuddyContext = _context.Subjects.Include(s => s.User);
+            var userId = CurrentUserId;
+            if (string.IsNullOrEmpty(userId)) return Challenge();
+
+            var studyBuddyContext = _context.Subjects
+                .Include(s => s.User)
+                .Where(s => s.UserId == userId);
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            ViewBag.DisplayName =
+                currentUser?.FirstName ??
+                currentUser?.UserName ??
+                _userManager.GetUserName(User) ??
+                "user";
+
             return View(await studyBuddyContext.ToListAsync());
         }
 
         // GET: Subjects/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
+
+            var userId = CurrentUserId;
+            if (string.IsNullOrEmpty(userId)) return Challenge();
 
             var subject = await _context.Subjects
                 .Include(s => s.User)
-                .FirstOrDefaultAsync(m => m.SubjectId == id);
-            if (subject == null)
-            {
-                return NotFound();
-            }
+                .FirstOrDefaultAsync(m => m.SubjectId == id && m.UserId == userId);
+
+            if (subject == null) return NotFound();
 
             return View(subject);
         }
@@ -48,95 +63,110 @@ namespace StudyBuddy.Controllers
         // GET: Subjects/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            // UserId se nastavi sam v POST, dropdown ne rabimo
             return View();
         }
 
         // POST: Subjects/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SubjectId,Name,UserId")] Subject subject)
+        public async Task<IActionResult> Create([Bind("SubjectId,Name")] Subject subject)
         {
-            if (ModelState.IsValid)
+            TempData["CreateHit"] = "POST Create was called";
+            var userId = CurrentUserId;
+            if (string.IsNullOrEmpty(userId)) return Challenge();
+
+            // Nastavi ownerja takoj (ker ni v formi)
+            subject.UserId = userId;
+
+            // Če imaš [Required] na UserId, je lahko ModelState že v errorju -> odstranimo ga
+            ModelState.Remove(nameof(Subject.UserId));
+
+            if (!ModelState.IsValid)
+                return View(subject);
+
+            _context.Subjects.Add(subject);
+
+            try
             {
-                _context.Add(subject);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", subject.UserId);
-            return View(subject);
+            catch (DbUpdateException)
+            {
+                // zaradi Unique index (UserId, Name) ali drugih DB constraintov
+                ModelState.AddModelError(nameof(Subject.Name), "You already have a subject with this name.");
+                return View(subject);
+            }
         }
+
 
         // GET: Subjects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var subject = await _context.Subjects.FindAsync(id);
-            if (subject == null)
-            {
-                return NotFound();
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", subject.UserId);
+            var userId = CurrentUserId;
+            if (string.IsNullOrEmpty(userId)) return Challenge();
+
+            var subject = await _context.Subjects
+                .FirstOrDefaultAsync(s => s.SubjectId == id && s.UserId == userId);
+
+            if (subject == null) return NotFound();
+
             return View(subject);
         }
 
         // POST: Subjects/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SubjectId,Name,UserId")] Subject subject)
+        public async Task<IActionResult> Edit(int id, [Bind("SubjectId,Name")] Subject subject)
         {
-            if (id != subject.SubjectId)
-            {
-                return NotFound();
-            }
+            if (id != subject.SubjectId) return NotFound();
+
+            var userId = CurrentUserId;
+            if (string.IsNullOrEmpty(userId)) return Challenge();
+
+            var existing = await _context.Subjects
+                .FirstOrDefaultAsync(s => s.SubjectId == id && s.UserId == userId);
+
+            if (existing == null) return NotFound();
+
+            ModelState.Remove(nameof(Subject.UserId));
+            ModelState.Remove(nameof(Subject.User));
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(subject);
+                    existing.Name = subject.Name;
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SubjectExists(subject.SubjectId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!SubjectExists(id)) return NotFound();
+                    throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", subject.UserId);
-            return View(subject);
+
+            return View(existing);
         }
 
         // GET: Subjects/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
+
+            var userId = CurrentUserId;
+            if (string.IsNullOrEmpty(userId)) return Challenge();
 
             var subject = await _context.Subjects
                 .Include(s => s.User)
-                .FirstOrDefaultAsync(m => m.SubjectId == id);
-            if (subject == null)
-            {
-                return NotFound();
-            }
+                .FirstOrDefaultAsync(m => m.SubjectId == id && m.UserId == userId);
+
+            if (subject == null) return NotFound();
 
             return View(subject);
         }
@@ -146,11 +176,25 @@ namespace StudyBuddy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var subject = await _context.Subjects.FindAsync(id);
-            if (subject != null)
-            {
-                _context.Subjects.Remove(subject);
-            }
+            var userId = CurrentUserId;
+            if (string.IsNullOrEmpty(userId)) return Challenge();
+
+            var subject = await _context.Subjects
+                .FirstOrDefaultAsync(s => s.SubjectId == id && s.UserId == userId);
+
+            if (subject == null) return NotFound();
+
+            var sessions = await _context.StudySessions
+                .Where(ss => ss.SubjectId == id)
+                .ToListAsync();
+            _context.StudySessions.RemoveRange(sessions);
+
+            var tasks = await _context.StudyTasks
+                .Where(t => t.SubjectId == id)
+                .ToListAsync();
+            _context.StudyTasks.RemoveRange(tasks);
+
+            _context.Subjects.Remove(subject);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

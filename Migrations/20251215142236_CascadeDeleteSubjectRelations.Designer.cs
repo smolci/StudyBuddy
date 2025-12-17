@@ -12,8 +12,8 @@ using StudyBuddy.Data;
 namespace StudyBuddy.Migrations
 {
     [DbContext(typeof(StudyBuddyContext))]
-    [Migration("20251201084906_AddedStudyTask")]
-    partial class AddedStudyTask
+    [Migration("20251215142236_CascadeDeleteSubjectRelations")]
+    partial class CascadeDeleteSubjectRelations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

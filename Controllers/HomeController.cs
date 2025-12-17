@@ -23,16 +23,30 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);
+        if (user == null) return Challenge();
 
         var subjects = _context.Subjects
             .Where(s => s.UserId == user.Id)
             .ToList();
-        return View(subjects);
+
+        var tasks = await _context.StudyTasks
+            .Include(t => t.Subject)
+            .Where(t => t.UserId == user.Id)
+            .ToListAsync();
+
+        var model = new HomeViewModel
+        {
+            Subjects = subjects,
+            StudyTasks = tasks
+        };
+
+        return View(model);
     }
 
     public async Task<IActionResult> AddSubject(string subjectName)
     {
         var user = await _userManager.GetUserAsync(User);
+        if (user == null) return Challenge();
 
         if (string.IsNullOrWhiteSpace(subjectName))
             return RedirectToAction("Index");
@@ -42,6 +56,7 @@ public class HomeController : Controller
 
         if (exists)
         {
+            TempData["SubjectExists"] = "true";
             return RedirectToAction("Index");
         }
 

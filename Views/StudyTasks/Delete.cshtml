@@ -1,31 +1,31 @@
-@model StudyBuddy.Models.Subject
+@model StudyBuddy.Models.StudyTask
 
 @{
-    ViewData["Title"] = "Delete subject";
+    ViewData["Title"] = "Delete Study Task";
 }
 
 <link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
 
 <div class="center-column">
     <div class="tasks-card">
-        <div class="card-title">DELETE SUBJECT</div>
+        <div class="card-title">DELETE STUDY TASK</div>
 
         <div class="auth-alert" style="margin-bottom: 12px;">
             Are you sure you want to delete
-            <strong>@(Model?.Name ?? "this subject")</strong>?
+            <strong>@(Model?.Description ?? "this study task")</strong>?
             This action can’t be undone.
         </div>
 
         <div class="auth-alert" style="margin-bottom: 14px;">
-            <strong>Warning:</strong> This will also delete all related
-            <strong>study sessions</strong> and <strong>study tasks</strong> under this subject.
+            <strong>Warning:</strong> This task is associated with the subject 
+            <strong>@(Model?.Subject?.Name ?? "unknown")</strong> and user 
+            <strong>@(Model?.User?.Id ?? "unknown")</strong>.
         </div>
-
 
         <div class="divider"></div>
 
         <form asp-action="Delete">
-            <input type="hidden" asp-for="SubjectId" />
+            <input type="hidden" asp-for="TaskId" />
 
             <div class="timer-modal-actions">
                 <button type="submit" class="btn-primary" style="background: #7c444f;">

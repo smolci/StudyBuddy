@@ -46,9 +46,17 @@
                         </a>
                     </li>
 
+                    <li class="nav-item">
+                        <a asp-controller="Subjects" asp-action="Index" class="nav-link">
+                            <span class="icon">👨‍🏫</span>
+                            <span>Subjects</span>
+                        </a>
+                    </li>
+
+
                     <div class="sidebar-section-title">Subjects</div>
                     <div class="project-chips">
-                        @foreach (var subject in Model)
+                        @foreach (var subject in Model.Subjects)
                         {
                             <div class="chip">@subject.Name</div>
                         }
@@ -105,7 +113,23 @@
                 <section class="tasks-card">
                     <div class="card-title">Today’s Tasks</div>
                     <ul class="task-list">
-                        @* tukaj se pojavijo user created tasks *@
+                        @foreach (var task in Model.StudyTasks)
+                        {
+                            <li class="task-item">
+                                <label class="task-left">
+                                    <!-- Checkbox default unchecked for now; update to use task.Completed when available -->
+                                    <input type="checkbox" class="task-checkbox-input" />
+                                    <span class="task-checkbox"></span>
+                                    <div>
+                                        <span>@task.Description</span>
+                                        @if (task.Subject != null)
+                                        {
+                                            <span class="task-subject">@task.Subject.Name</span>
+                                        }
+                                    </div>
+                                </label>
+                            </li>
+                        }
                     </ul>
                 </section>
 
@@ -147,7 +171,7 @@
                 <span class="timer-modal-input-label">Subject</span>
                 <select id="timerSubjectSelect">
                     <option value="">Select subject…</option>
-                    @foreach (var subject in Model)
+                    @foreach (var subject in Model.Subjects)
                     {
                         <option value="@subject.Name">@subject.Name</option>
                     }
@@ -205,7 +229,7 @@
                 <span class="timer-modal-input-label">Subject</span>
                 <select id="quickAddSubject">
                     <option value="">Select subject…</option>
-                    @foreach (var subject in Model)
+                    @foreach (var subject in Model.Subjects)
                     {
                         <option value="@subject.Name">@subject.Name</option>
                     }
@@ -254,7 +278,8 @@
 
     <script>
         window.studyBuddyConfig = {
-            createStudySessionUrl: '@Url.Action("CreateFromTimer", "StudySessions")'
+            createStudySessionUrl: '@Url.Action("CreateFromTimer", "StudySessions")',
+            createQuickTaskUrl: '@Url.Action("CreateFromQuickAdd", "StudyTasks")'
         };
     </script>
 

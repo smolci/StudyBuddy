@@ -127,6 +127,9 @@ namespace StudyBuddy.Controllers
                         s.UserId == user.Id);
             }
 
+            if (subject == null)
+                    return BadRequest(new { error = "subject_not_found" });
+
             var session = new StudySession
             {
                 StartTime = DateTime.UtcNow,
