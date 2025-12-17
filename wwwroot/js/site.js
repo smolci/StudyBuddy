@@ -448,7 +448,7 @@
                 });
 
                 // dodamo task v daily tasks
-                quickAddConfirm.addEventListener("click", () => {
+                quickAddConfirm.addEventListener("click", async () => {
                     const rawTaskName = (currentTaskNameForModal || "").trim();
 
                     if (!rawTaskName) {
@@ -459,12 +459,71 @@
                     const minutesStr = quickAddMinutesInput.value.trim().replace(",", ".");
                     const minutes = parseFloat(minutesStr);
                     if (isNaN(minutes) || minutes <= 0) {
-                        showError("Please enter a valid duration in minutes.");
+                        showError("Prosimo vnesite veljaven čas v minutah.");
                         return;
                     }
 
                     const subject = quickAddSubjectSelect.value;
 
+                    const createUrl = window.studyBuddyConfig?.createQuickTaskUrl || null;
+
+                    // Če baza ne deluje ali URL ni nastavljen, samo dodamo v Daily Taske, ki se shrani le lokalno
+                    if (!createUrl) {
+                        appendQuickTaskToDom(rawTaskName, subject, minutes);
+                        quickInput.value = "";
+                        currentTaskNameForModal = "";
+                        hideQuickAddModal();
+                        return;
+                    }
+
+                    quickAddConfirm.disabled = true;
+                    try {
+                        const res = await fetch(createUrl, {
+                            method: "POST",
+                            credentials: "same-origin",
+                            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                            body: JSON.stringify({ description: rawTaskName, subjectName: subject })
+                        });
+
+                        if (!res.ok) {
+                            if (res.status === 401) {
+                                showError("Prosimo se prijavite, da lahko dodajate naloge.");
+                                return;
+                            }
+                            if (res.status === 403) {
+                                showError("Nimate dovoljenja za to dejanje.");
+                                return;
+                            }
+
+                            let json = null;
+                            try { json = await res.json(); } catch (e) { }
+                            const err = json?.error || null;
+                            if (err === "subject_missing") showError("Prosimo izberite predmet.");
+                            else if (err === "subject_not_found") showError("Izbrani predmet ne obstaja.");
+                            else if (err === "empty_description") showError("Dodajte opis naloge.");
+                            else showError("Napaka pri shranjevanju naloge.");
+                            return;
+                        }
+
+                        const data = await res.json();
+                        const task = data?.task;
+                        const desc = task?.description || rawTaskName;
+                        const subj = task?.subjectName || subject;
+                        appendQuickTaskToDom(desc, subj, minutes);
+
+                        // reset
+                        quickInput.value = "";
+                        currentTaskNameForModal = "";
+                        hideQuickAddModal();
+                    } catch (e) {
+                        console.error("Quick add network error:", e);
+                        showError("Network error while saving task. Check console for details.");
+                    } finally {
+                        quickAddConfirm.disabled = false;
+                    }
+                });
+
+                function appendQuickTaskToDom(title, subject, minutes) {
                     const li = document.createElement("li");
                     li.className = "task-item";
 
@@ -480,7 +539,7 @@
 
                     const textWrapper = document.createElement("div");
                     const titleSpan = document.createElement("span");
-                    titleSpan.textContent = rawTaskName;
+                    titleSpan.textContent = title;
                     textWrapper.appendChild(titleSpan);
 
                     if (subject) {
@@ -502,17 +561,10 @@
                     li.appendChild(durationSpan);
 
                     taskList.appendChild(li);
-
                     bindTaskItem(li);
-
-                    // reset
-                    quickInput.value = "";
-                    currentTaskNameForModal = "";
-                    hideQuickAddModal();
-                });
+                }
             }
         }
-
         // --------------------------------------------------------
         // ADD SUBJECT MODAL
         // --------------------------------------------------------

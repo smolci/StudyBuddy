@@ -197,5 +197,42 @@ namespace StudyBuddy.Controllers
         {
             return _context.StudyTasks.Any(e => e.TaskId == id);
         }
+
+        // POST: StudyTasks/CreateFromQuickAdd
+        [HttpPost]
+        public async Task<IActionResult> CreateFromQuickAdd([FromBody] QuickAddDto dto)
+        {
+            var userId = CurrentUserId;
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+            if (dto == null || string.IsNullOrWhiteSpace(dto.Description))
+                return BadRequest(new { error = "empty_description" });
+
+            if (string.IsNullOrWhiteSpace(dto.SubjectName))
+                return BadRequest(new { error = "subject_missing" });
+
+            var subject = await _context.Subjects.FirstOrDefaultAsync(
+                s => s.UserId == userId &&
+                s.Name == dto.SubjectName
+            );
+            if (subject == null) return BadRequest(new { error = "subject_not_found" });
+
+            var studyTask = new StudyTask
+            {
+                Description = dto.Description.Trim(),
+                UserId = userId,
+                SubjectId = subject.SubjectId
+            };
+
+            _context.StudyTasks.Add(studyTask);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                success = true,
+                task = new { id = studyTask.TaskId, description = studyTask.Description, subjectName = subject.Name }
+            });
+        }
+        public record QuickAddDto(string Description, string SubjectName);
     }
 }

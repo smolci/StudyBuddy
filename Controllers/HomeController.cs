@@ -54,6 +54,7 @@ public class HomeController : Controller
 
         if (exists)
         {
+            TempData["SubjectExists"] = "true";
             return RedirectToAction("Index");
         }
 
