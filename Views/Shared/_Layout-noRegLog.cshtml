@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StudyBuddy</title>
+    <link rel="icon" type="image/png" href="~/images/logo.png" />
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/StudyBuddy.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-left">
+            <a href="@Url.Action("Index", "Home")" style="text-decoration:none; display:inline-block;">
+                <img src="~/images/logo.png" 
+                    alt="StudyBuddy" 
+                    style="width:50px; height:auto; cursor:pointer; border-radius:12px" />
+            </a>
+            <div class="topbar-title">
+                <span>Study Buddy</span>
+                <span>
+                    @using Microsoft.AspNetCore.Identity
+                    @inject UserManager<User> UserManager
+                    @inject SignInManager<User> SignInManager
+
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        var currentUser = await UserManager.GetUserAsync(User);
+                        var displayName = currentUser?.FirstName ?? currentUser?.UserName ?? UserManager.GetUserName(User) ?? "user";
+                        <text>Welcome back, @displayName!</text>
+                    }
+                    else
+                    {
+                        <text>Welcome, guest!</text>
+                    }
+                </span>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - StudyBuddy - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer> -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+
