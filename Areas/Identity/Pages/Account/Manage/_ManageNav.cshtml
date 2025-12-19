@@ -1,0 +1,8 @@
+<link rel="stylesheet" href="~/css/Index.css" />
+
+<ul class="sidebar nav-list" style="width: 300px;">
+    <li class="nav-item active"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index"><span>Profile</span></a></li>
+    <li class="nav-item"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email"><span>Email</span></a></li>
+    <li class="nav-item"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword"><span>Password</span></a></li>
+    <li class="nav-item"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData"><span>Personal data</span></a></li>
+</ul>
