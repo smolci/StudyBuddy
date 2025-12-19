@@ -11,68 +11,12 @@
 </head>
 
 <body>
+@model StudyBuddy.Models.HomeViewModel
+
     <div class="app-shell">
         <main class="main-layout">
             <!-- Sidebar -->
-            <aside class="sidebar">
-                <div>
-                    <div class="sidebar-section-title">Navigation</div>
-
-                    <li class="nav-item active">
-                        <a asp-controller="Home" asp-action="Index" class="nav-link">
-                            <span class="icon">🏠</span>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a asp-controller="StudyTasks" asp-action="Index" class="nav-link">
-                            <span class="icon">✅</span>
-                            <span>Tasks</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a asp-controller="Stats" asp-action="Index" class="nav-link">
-                            <span class="icon">📊</span>
-                            <span>Stats</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a asp-area="Identity" asp-page="/Account/Manage/Index" class="nav-link">
-                            <span class="icon">⚙️</span>
-                            <span>Settings</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a asp-controller="Subjects" asp-action="Index" class="nav-link">
-                            <span class="icon">👨‍🏫</span>
-                            <span>Subjects</span>
-                        </a>
-                    </li>
-
-
-                    <div class="sidebar-section-title">Subjects</div>
-                    <div class="project-chips">
-                        @foreach (var subject in Model.Subjects)
-                        {
-                            <div class="chip">@subject.Name</div>
-                        }
-                    </div>
-
-                    <div id="addSubjectChip" class="m-1">
-                        <button id="showInputBtn" type="button" class="btn btn-primary rounded-circle"
-                            style="width:30px; height:30px; padding: 0;">+</button>
-                        <form id="addSubjectForm" asp-action="AddSubject" method="post" class="d-none">
-                            <input type="text" name="subjectName" placeholder="Ime predmeta" class="form-control mb-1"
-                                style="display:inline-block; width:auto;" />
-                            <button type="submit" class="btn btn-success btn-sm">Dodaj</button>
-                        </form>
-                    </div>
-                </div>
-            </aside>
+            @await Html.PartialAsync("_Sidebar", Model)
 
             <!-- Center column -->
             <section class="center-column">
@@ -251,28 +195,6 @@
             <p class="timer-modal-text" id="quickAddErrorText">
                 You need to add a task description first...
             </p>
-        </div>
-    </div>
-
-    <!-- Add Subject modal -->
-    <div class="timer-modal-backdrop" id="addSubjectModal">
-        <div class="timer-modal">
-            <button type="button" class="modal-close-btn" id="addSubjectClose">✕</button>
-
-            <h2 class="timer-modal-title">Even more work? Really?</h2>
-            <p class="timer-modal-text">Add a new subject to keep things organized.</p>
-
-            <form id="addSubjectModalForm" asp-action="AddSubject" method="post">
-                <div class="timer-modal-input-row">
-                    <input type="text" id="addSubjectInput" name="subjectName" placeholder="Subject name..."
-                        autocomplete="off" />
-                </div>
-
-                <div class="timer-modal-actions">
-                    <button type="button" class="btn-pill secondary" id="addSubjectCancel">Cancel</button>
-                    <button type="submit" class="btn-pill primary">Add subject</button>
-                </div>
-            </form>
         </div>
     </div>
 

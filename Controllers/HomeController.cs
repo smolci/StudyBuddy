@@ -43,7 +43,7 @@ public class HomeController : Controller
         return View(model);
     }
 
-    public async Task<IActionResult> AddSubject(string subjectName)
+    public async Task<IActionResult> AddSubject(string subjectName, string? returnUrl)
     {
         var user = await _userManager.GetUserAsync(User);
         if (user == null) return Challenge();
@@ -68,6 +68,12 @@ public class HomeController : Controller
 
         _context.Subjects.Add(subject);
             await _context.SaveChangesAsync();
+
+        // If a returnUrl was provided and is local, redirect back there; otherwise go to Index
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            return LocalRedirect(returnUrl);
+        }
 
         return RedirectToAction("Index");
     }

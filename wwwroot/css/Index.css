@@ -180,6 +180,81 @@ body {
     height: 100%;
 }
 
+/* Optional: make Stats page layout single-column even if focus-card stays a grid */
+.stats-layout {
+    grid-template-columns: 1fr; /* overrides the 50/50 layout on stats page */
+    column-gap: 0;
+    row-gap: 16px;
+}
+
+/* Insights block */
+.insights {
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-soft);
+    padding: 16px 18px;
+    box-shadow: var(--shadow-soft);
+}
+
+.insights-header {
+    margin-bottom: 12px;
+}
+
+.insights-title {
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: #c27a6a;
+}
+
+.insights-sub {
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.insights-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.insight-card {
+    background: #fff7f4;
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 12px 12px;
+}
+
+.insight-kicker {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    font-weight: 800;
+}
+
+.insight-value {
+    margin-top: 6px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #7c444f;
+}
+
+.insight-meta {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #8f6a6e;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .insights-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+    .insights-grid { grid-template-columns: 1fr; }
+}
 
 .focus-header-pill {
     align-self: flex-start;

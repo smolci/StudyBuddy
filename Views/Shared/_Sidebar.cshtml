@@ -1,0 +1,118 @@
+@using StudyBuddy.Models
+@{
+    // Partial is flexible: it will try several places to find a collection of subjects.
+    IEnumerable<Subject> subjects = Enumerable.Empty<Subject>();
+
+    if (Model is HomeViewModel hv && hv?.Subjects != null)
+    {
+        subjects = hv.Subjects;
+    }
+    else if (Model is IEnumerable<Subject> subjEnum)
+    {
+        subjects = subjEnum;
+    }
+    else if (ViewBag.Subjects is IEnumerable<Subject> vbSubj)
+    {
+        subjects = vbSubj;
+    }
+    else if (ViewData["Subjects"] is IEnumerable<Subject> vdSubj)
+    {
+        subjects = vdSubj;
+    }
+}
+
+@{
+    // determine current route for active link highlighting
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var currentArea = ViewContext.RouteData.Values["area"]?.ToString();
+    var currentPage = ViewContext.RouteData.Values["page"]?.ToString();
+
+    bool IsController(string name) => string.Equals(currentController, name, StringComparison.OrdinalIgnoreCase);
+    bool IsAction(string name) => string.Equals(currentAction, name, StringComparison.OrdinalIgnoreCase);
+
+    bool homeActive = IsController("Home") && (string.IsNullOrEmpty(currentAction) || IsAction("Index"));
+    bool tasksActive = IsController("StudyTasks");
+    bool statsActive = IsController("Stats");
+    bool subjectsActive = IsController("Subjects");
+    bool settingsActive = string.Equals(currentArea, "Identity", StringComparison.OrdinalIgnoreCase)
+                          && (currentPage?.StartsWith("/Account/Manage", StringComparison.OrdinalIgnoreCase) ?? false);
+}
+
+<aside class="sidebar">
+    <div>
+        <div class="sidebar-section-title">Navigation</div>
+
+        <li class="nav-item @(homeActive ? "active" : "")">
+            <a asp-controller="Home" asp-action="Index" class="nav-link">
+                <span>🏠 Dashboard</span>
+            </a>
+        </li>
+
+        <li class="nav-item @(tasksActive ? "active" : "")">
+            <a asp-controller="StudyTasks" asp-action="Index" class="nav-link">
+                <span>✅ Tasks</span>
+            </a>
+        </li>
+
+        <li class="nav-item @(subjectsActive ? "active" : "")">
+            <a asp-controller="Subjects" asp-action="Index" class="nav-link">
+                <span>📕 Subjects</span>
+            </a>
+        </li>
+
+        <li class="nav-item @(statsActive ? "active" : "")">
+            <a asp-controller="Stats" asp-action="Index" class="nav-link">
+                <span>📈 Stats</span>
+            </a>
+        </li>
+
+        <li class="nav-item @(settingsActive ? "active" : "")">
+            <a asp-area="Identity" asp-page="/Account/Manage/Index" class="nav-link">
+                <span>⚙️ Settings</span>
+            </a>
+        </li>
+
+        <div class="sidebar-section-title">Subjects</div>
+        <div class="project-chips">
+            @foreach (var subject in subjects)
+            {
+                <div class="chip">@subject.Name</div>
+            }
+        </div>
+
+        <div id="addSubjectChip" class="m-1">
+            <button id="showInputBtn" type="button" class="btn btn-primary rounded-circle"
+                style="width:30px; height:30px; padding: 0;">+</button>
+            <form id="addSubjectForm" asp-controller="Home" asp-action="AddSubject" method="post" class="d-none">
+                <input type="hidden" name="returnUrl" value="@((Context.Request.Path + Context.Request.QueryString).ToString())" />
+                <input type="text" name="subjectName" placeholder="Ime predmeta" class="form-control mb-1"
+                    style="display:inline-block; width:auto;" />
+                <button type="submit" class="btn btn-success btn-sm">Dodaj</button>
+            </form>
+        </div>
+    </div>
+</aside>
+
+<!-- Add Subject modal (moved here so it works on all pages that include the sidebar) -->
+<div class="timer-modal-backdrop" id="addSubjectModal">
+    <div class="timer-modal">
+        <button type="button" class="modal-close-btn" id="addSubjectClose">✕</button>
+
+        <h2 class="timer-modal-title">Even more work? Really?</h2>
+        <p class="timer-modal-text">Add a new subject to keep things organized.</p>
+
+        <form id="addSubjectModalForm" asp-controller="Home" asp-action="AddSubject" method="post">
+            <input type="hidden" name="returnUrl" value="@((Context.Request.Path + Context.Request.QueryString).ToString())" />
+            <div class="timer-modal-input-row">
+                <input type="text" id="addSubjectInput" name="subjectName" placeholder="Subject name..."
+                    autocomplete="off" />
+            </div>
+
+            <div class="timer-modal-actions">
+                <button type="button" class="btn-pill secondary" id="addSubjectCancel">Cancel</button>
+                <button type="submit" class="btn-pill primary">Add subject</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -40,7 +40,10 @@ namespace StudyBuddy.Controllers
                 _userManager.GetUserName(User) ??
                 "user";
 
-            return View(await studyBuddyContext.ToListAsync());
+            var subjects = await studyBuddyContext.ToListAsync();
+            ViewBag.Subjects = subjects; // expose to sidebar
+
+            return View(subjects);
         }
 
         // GET: Subjects/Details/5
@@ -56,6 +59,10 @@ namespace StudyBuddy.Controllers
                 .FirstOrDefaultAsync(m => m.SubjectId == id && m.UserId == userId);
 
             if (subject == null) return NotFound();
+
+            // expose user's subjects for sidebar
+            var subjects = await _context.Subjects.Where(s => s.UserId == userId).ToListAsync();
+            ViewBag.Subjects = subjects;
 
             return View(subject);
         }

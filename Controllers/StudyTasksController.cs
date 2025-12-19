@@ -36,6 +36,12 @@ namespace StudyBuddy.Controllers
                 .Where(t => t.UserId == currentUser.Id)
                 .ToListAsync();
 
+            // Provide subjects for the shared sidebar
+            var userSubjects = await _context.Subjects
+                .Where(s => s.UserId == currentUser.Id)
+                .ToListAsync();
+            ViewBag.Subjects = userSubjects;
+
             return View(userTasks);
         }
 
@@ -64,6 +70,9 @@ namespace StudyBuddy.Controllers
                 .ToListAsync();
 
             ViewData["SubjectId"] = new SelectList(userSubjects, "SubjectId", "Name");
+
+            // also expose for sidebar
+            ViewBag.Subjects = userSubjects;
 
             return View();
         }
@@ -117,6 +126,9 @@ namespace StudyBuddy.Controllers
                 .ToListAsync();
 
             ViewData["SubjectId"] = new SelectList(userSubjects, "SubjectId", "Name");
+
+            // expose to sidebar
+            ViewBag.Subjects = userSubjects;
 
             return View(studyTask);
         }
