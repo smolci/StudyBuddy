@@ -23,7 +23,12 @@ namespace StudyBuddy.Controllers
         public async Task<IActionResult> Index()
         {
             var studyBuddyContext = _context.Topics.Include(t => t.Subject);
-            return View(await studyBuddyContext.ToListAsync());
+            var topics = await studyBuddyContext.ToListAsync();
+
+            // expose subjects for the shared sidebar
+            ViewBag.Subjects = await _context.Subjects.ToListAsync();
+
+            return View(topics);
         }
 
         // GET: Topics/Details/5
@@ -42,6 +47,7 @@ namespace StudyBuddy.Controllers
                 return NotFound();
             }
 
+            ViewBag.Subjects = await _context.Subjects.ToListAsync();
             return View(topic);
         }
 
@@ -49,6 +55,7 @@ namespace StudyBuddy.Controllers
         public IActionResult Create()
         {
             ViewData["SubjectId"] = new SelectList(_context.Subjects, "SubjectId", "Name");
+            ViewBag.Subjects = _context.Subjects.ToList();
             return View();
         }
 
@@ -66,6 +73,7 @@ namespace StudyBuddy.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["SubjectId"] = new SelectList(_context.Subjects, "SubjectId", "Name", topic.SubjectId);
+            ViewBag.Subjects = _context.Subjects.ToList();
             return View(topic);
         }
 
@@ -83,6 +91,7 @@ namespace StudyBuddy.Controllers
                 return NotFound();
             }
             ViewData["SubjectId"] = new SelectList(_context.Subjects, "SubjectId", "Name", topic.SubjectId);
+            ViewBag.Subjects = _context.Subjects.ToList();
             return View(topic);
         }
 
@@ -119,6 +128,7 @@ namespace StudyBuddy.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["SubjectId"] = new SelectList(_context.Subjects, "SubjectId", "Name", topic.SubjectId);
+            ViewBag.Subjects = _context.Subjects.ToList();
             return View(topic);
         }
 
@@ -138,6 +148,7 @@ namespace StudyBuddy.Controllers
                 return NotFound();
             }
 
+            ViewBag.Subjects = await _context.Subjects.ToListAsync();
             return View(topic);
         }
 

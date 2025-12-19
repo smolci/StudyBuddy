@@ -1,0 +1,72 @@
+@{
+    ViewData["Title"] = "Stats";
+}
+
+<link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
+
+<div class="app-shell">
+    <main class="main-layout">
+        @await Html.PartialAsync("_Sidebar", null)
+
+        <section class="center-column">
+            <section class="focus-card stats-layout">
+                
+                <!-- FULL-WIDTH CHART CARD -->
+                <section class="weekly-card">
+                    <div class="weekly-header">
+                        <div>
+                            <div class="weekly-label">Weekly focus</div>
+                            <div class="weekly-time">6h 40m</div>
+                        </div>
+                        <div class="weekly-change">+12%</div>
+                    </div>
+
+                    <div class="weekly-chart">
+                        <div class="chart-bar"></div>
+                        <div class="chart-bar"></div>
+                        <div class="chart-bar"></div>
+                        <div class="chart-bar"></div>
+                        <div class="chart-bar"></div>
+                        <div class="chart-bar"></div>
+                        <div class="chart-bar"></div>
+                    </div>
+                </section>
+
+                <!-- INSIGHTS BELOW -->
+                <section class="insights">
+                    <div class="insights-header">
+                        <div class="insights-title">Your Study Insights</div>
+                        <div class="insights-sub">Quick highlights from your recent activity</div>
+                    </div>
+
+                    <div class="insights-grid">
+                        <article class="insight-card">
+                            <div class="insight-kicker">Most studied subject</div>
+                            <div class="insight-value">AIPS1</div>
+                            <div class="insight-meta">2h 05m this week</div>
+                        </article>
+
+                        <article class="insight-card">
+                            <div class="insight-kicker">Most tasks completed</div>
+                            <div class="insight-value">EMP1</div>
+                            <div class="insight-meta">12 tasks completed</div>
+                        </article>
+
+                        <article class="insight-card">
+                            <div class="insight-kicker">Best day</div>
+                            <div class="insight-value">Wednesday</div>
+                            <div class="insight-meta">1h 45m focused</div>
+                        </article>
+
+                        <article class="insight-card">
+                            <div class="insight-kicker">Avg session</div>
+                            <div class="insight-value">28m</div>
+                            <div class="insight-meta">Keep sessions 25–35m</div>
+                        </article>
+                    </div>
+                </section>
+
+            </section>
+        </section>
+    </main>
+</div>

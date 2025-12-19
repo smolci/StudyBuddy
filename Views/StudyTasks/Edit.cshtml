@@ -6,8 +6,12 @@
 
 <link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
 
-<div class="center-column">
-    <div class="tasks-card">
+<div class="app-shell">
+    <main class="main-layout">
+        @await Html.PartialAsync("_Sidebar", null)
+
+        <section class="center-column">
+            <div class="tasks-card">
         <div class="card-title">EDIT STUDY TASK</div>
 
         <div class="sidebar-section-title" style="margin-bottom: 12px;">
@@ -39,7 +43,9 @@
                 </a>
             </div>
         </form>
-    </div>
+            </div>
+        </section>
+    </main>
 </div>
 
 @section Scripts {
