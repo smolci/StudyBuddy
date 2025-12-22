@@ -481,6 +481,11 @@ body {
 
 
 /* Tasks Card ------------------------------------------------------ */
+.tasks-card ul,
+.tasks-card ol {
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+}
 
 .tasks-card {
     margin-top: 6px;
@@ -507,6 +512,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
 }
 
 .task-item {
