@@ -3,7 +3,6 @@
 }
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
     <title>Study Buddy</title>
@@ -11,91 +10,70 @@
 </head>
 
 <body>
+@model StudyBuddy.Models.HomeViewModel
+
+@{
+    var scaleMaxMinutes = 8 * 60;
+    var stats = Model.Stats;
+}
+
     <div class="app-shell">
         <main class="main-layout">
             <!-- Sidebar -->
-            <aside class="sidebar">
-                <div>
-                    <div class="sidebar-section-title">Navigation</div>
-
-                    <li class="nav-item active">
-                        <a asp-controller="Home" asp-action="Index" class="nav-link">
-                            <span class="icon">🏠</span>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a asp-controller="StudyTasks" asp-action="Index" class="nav-link">
-                            <span class="icon">✅</span>
-                            <span>Tasks</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a asp-controller="Stats" asp-action="Index" class="nav-link">
-                            <span class="icon">📊</span>
-                            <span>Stats</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a asp-area="Identity" asp-page="/Account/Manage/Index" class="nav-link">
-                            <span class="icon">⚙️</span>
-                            <span>Settings</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a asp-controller="Subjects" asp-action="Index" class="nav-link">
-                            <span class="icon">👨‍🏫</span>
-                            <span>Subjects</span>
-                        </a>
-                    </li>
-
-
-                    <div class="sidebar-section-title">Subjects</div>
-                    <div class="project-chips">
-                        @foreach (var subject in Model.Subjects)
-                        {
-                            <div class="chip">@subject.Name</div>
-                        }
-                    </div>
-
-                    <div id="addSubjectChip" class="m-1">
-                        <button id="showInputBtn" type="button" class="btn btn-primary rounded-circle"
-                            style="width:30px; height:30px; padding: 0;">+</button>
-                        <form id="addSubjectForm" asp-action="AddSubject" method="post" class="d-none">
-                            <input type="text" name="subjectName" placeholder="Ime predmeta" class="form-control mb-1"
-                                style="display:inline-block; width:auto;" />
-                            <button type="submit" class="btn btn-success btn-sm">Dodaj</button>
-                        </form>
-                    </div>
-                </div>
-            </aside>
+            @await Html.PartialAsync("_Sidebar", Model)
 
             <!-- Center column -->
             <section class="center-column">
                 <section class="focus-card">
+
+                    <!-- WEEKLY STATS (dynamic, same as Stats page) -->
                     <section class="weekly-card">
                         <div class="weekly-header">
                             <div>
                                 <div class="weekly-label">Weekly focus</div>
-                                <div class="weekly-time">6h 40m</div>
+                                <div class="weekly-time">@FormatMinutes(stats?.TotalWeekMinutes ?? 0)</div>
                             </div>
-                            <div class="weekly-change">+12%</div>
+
+                            <div class="weekly-change">
+                                @($"{(stats?.WeekChangePercent ?? 0):+0;-0;0}%")
+                            </div>
                         </div>
-                        <div class="weekly-chart">
-                            <div class="chart-bar"></div>
-                            <div class="chart-bar"></div>
-                            <div class="chart-bar"></div>
-                            <div class="chart-bar"></div>
-                            <div class="chart-bar"></div>
-                            <div class="chart-bar"></div>
-                            <div class="chart-bar"></div>
+
+                        <div class="weekly-chart-axis">
+                            <!-- Y axis -->
+                            <div class="y-axis">
+                                <div class="y-tick">8h</div>
+                                <div class="y-tick">7h</div>
+                                <div class="y-tick">6h</div>
+                                <div class="y-tick">5h</div>
+                                <div class="y-tick">4h</div>
+                                <div class="y-tick">3h</div>
+                                <div class="y-tick">2h</div>
+                                <div class="y-tick">1h</div>
+                            </div>
+
+                            <!-- Bars -->
+                            <div class="weekly-chart weekly-chart-with-labels">
+                                @foreach (var d in (stats?.Days ?? new List<StudyBuddy.Models.ViewModels.DayStat>()))
+                                {
+                                    var capped = Math.Min(d.Minutes, scaleMaxMinutes);
+                                    var pct = (int)Math.Round((capped / (double)scaleMaxMinutes) * 100.0);
+
+                                    if (d.Minutes > 0) pct = Math.Max(pct, 6);
+
+                                    <div class="chart-col">
+                                        <div class="chart-bar"
+                                             style="height:@pct%;"
+                                             data-tooltip="@($"{d.DayName} — {FormatMinutes(d.Minutes)} focus")">
+                                        </div>
+                                        <div class="chart-day">@d.DayName.Substring(0, 3)</div>
+                                    </div>
+                                }
+                            </div>
                         </div>
                     </section>
 
+                    <!-- TIMER -->
                     <div class="timer-card">
                         <div class="timer-subject-label" id="timerSubjectLabel"></div>
                         <div class="timer-circle">
@@ -108,6 +86,7 @@
                             <button class="btn-pill secondary">Reset</button>
                         </div>
                     </div>
+
                 </section>
 
                 <section class="tasks-card">
@@ -117,7 +96,6 @@
                         {
                             <li class="task-item">
                                 <label class="task-left">
-                                    <!-- Checkbox default unchecked for now; update to use task.Completed when available -->
                                     <input type="checkbox" class="task-checkbox-input" />
                                     <span class="task-checkbox"></span>
                                     <div>
@@ -139,14 +117,9 @@
                         <input class="quick-input" id="quickAddInput" placeholder="New task..." />
                         <button class="btn-add" id="quickAddButton">Add</button>
                     </div>
-                    <div class="quick-tip">Press <strong>Enter</strong> to add quickly.</div>
+                    <div class="quick-tip">Tip: Press <strong>Enter</strong> to add quickly.</div>
                 </section>
             </section>
-
-            @* Right column (če jo boš kdaj rabil)
-            <section class="right-column">
-            </section>
-            *@
         </main>
     </div>
 
@@ -254,28 +227,6 @@
         </div>
     </div>
 
-    <!-- Add Subject modal -->
-    <div class="timer-modal-backdrop" id="addSubjectModal">
-        <div class="timer-modal">
-            <button type="button" class="modal-close-btn" id="addSubjectClose">✕</button>
-
-            <h2 class="timer-modal-title">Even more work? Really?</h2>
-            <p class="timer-modal-text">Add a new subject to keep things organized.</p>
-
-            <form id="addSubjectModalForm" asp-action="AddSubject" method="post">
-                <div class="timer-modal-input-row">
-                    <input type="text" id="addSubjectInput" name="subjectName" placeholder="Subject name..."
-                        autocomplete="off" />
-                </div>
-
-                <div class="timer-modal-actions">
-                    <button type="button" class="btn-pill secondary" id="addSubjectCancel">Cancel</button>
-                    <button type="submit" class="btn-pill primary">Add subject</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <script>
         window.studyBuddyConfig = {
             createStudySessionUrl: '@Url.Action("CreateFromTimer", "StudySessions")',
@@ -285,5 +236,16 @@
 
     <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
-
 </html>
+
+@functions {
+    public string FormatMinutes(int minutes)
+    {
+        if (minutes <= 0) return "0m";
+        var h = minutes / 60;
+        var m = minutes % 60;
+        if (h <= 0) return $"{m}m";
+        if (m == 0) return $"{h}h";
+        return $"{h}h {m}m";
+    }
+}

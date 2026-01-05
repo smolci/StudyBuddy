@@ -1,0 +1,50 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<link rel="stylesheet" href="~/css/Index.css" />
+
+<div class="auth-card" style="max-width: 520px;">
+    <h3>@ViewData["Title"]</h3>
+
+    <partial name="_StatusMessage" for="StatusMessage" />
+
+    <form id="profile-form" method="post" class="auth-form">
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div asp-validation-summary="ModelOnly"
+                 class="auth-alert"
+                 role="alert"></div>
+        }
+
+        <div class="field">
+            <label asp-for="Username"></label>
+            <input asp-for="Username"
+                   class="input"
+                   disabled />
+        </div>
+
+        <div class="field">
+            <label asp-for="Input.PhoneNumber"></label>
+            <input asp-for="Input.PhoneNumber"
+                   class="input"
+                   placeholder="Enter your phone number" />
+            <span asp-validation-for="Input.PhoneNumber"
+                  class="field-error"></span>
+        </div>
+
+        <button id="update-profile-button"
+                type="submit"
+                class="btn-primary w100">
+            Save
+        </button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

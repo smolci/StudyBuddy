@@ -1,0 +1,110 @@
+@model StudyBuddy.Models.ViewModels.StatsViewModel
+
+@{
+    ViewData["Title"] = "Stats";
+
+    // Scale chart to 8 hours max (480 minutes)
+    var scaleMaxMinutes = 8 * 60;
+}
+
+<link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
+
+<div class="app-shell">
+    <main class="main-layout">
+        @await Html.PartialAsync("_Sidebar", null)
+
+        <section class="center-column">
+            <section class="focus-card stats-layout">
+
+                <section class="weekly-card">
+                    <div class="weekly-header">
+                        <div>
+                            <div class="weekly-label">Weekly focus</div>
+                            <div class="weekly-time">@FormatMinutes(Model.TotalWeekMinutes)</div>
+                        </div>
+
+                        <div class="weekly-change">
+                            @($"{(Model.WeekChangePercent ?? 0):+0;-0;0}%")
+                        </div>
+                    </div>
+
+                    <!-- CHART + Y AXIS WRAPPER -->
+                    <div class="weekly-chart-axis">
+                        <!-- Y axis (top to bottom) -->
+                        <div class="y-axis">
+                            <div class="y-tick">8h</div>
+                            <div class="y-tick">7h</div>
+                            <div class="y-tick">6h</div>
+                            <div class="y-tick">5h</div>
+                            <div class="y-tick">4h</div>
+                            <div class="y-tick">3h</div>
+                            <div class="y-tick">2h</div>
+                            <div class="y-tick">1h</div>
+                        </div>
+
+                        <!-- Bars -->
+                        <div class="weekly-chart weekly-chart-with-labels">
+                            @foreach (var d in Model.Days)
+                            {
+                                // Scale to 8 hours; cap if someone exceeds 8h/day
+                                var capped = Math.Min(d.Minutes, scaleMaxMinutes);
+                                var pct = (int)Math.Round((capped / (double)scaleMaxMinutes) * 100.0);
+
+                                // Keep tiny sessions visible
+                                if (d.Minutes > 0) pct = Math.Max(pct, 6);
+
+                                <div class="chart-col">
+                                    <div class="chart-bar"
+                                         style="height:@pct%;"
+                                         data-tooltip="@($"{d.DayName} — {FormatMinutes(d.Minutes)} focus")">
+                                    </div>
+                                    <div class="chart-day">@d.DayName.Substring(0, 3)</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </section>
+
+                <section class="insights">
+                    <div class="insights-header">
+                        <div class="insights-title">Your Study Insights</div>
+                        <div class="insights-sub">Quick highlights from your recent activity</div>
+                    </div>
+
+                    <div class="insights-grid insights-grid-3">
+                        <article class="insight-card">
+                            <div class="insight-kicker">Most studied subject</div>
+                            <div class="insight-value">@Model.MostStudiedSubjectName</div>
+                            <div class="insight-meta">@FormatMinutes(Model.MostStudiedSubjectMinutes) this week</div>
+                        </article>
+
+                        <article class="insight-card">
+                            <div class="insight-kicker">Best day</div>
+                            <div class="insight-value">@Model.BestDayName</div>
+                            <div class="insight-meta">@FormatMinutes(Model.BestDayMinutes) focused</div>
+                        </article>
+
+                        <article class="insight-card">
+                            <div class="insight-kicker">Avg session</div>
+                            <div class="insight-value">@($"{Model.AverageSessionMinutes}m")</div>
+                            <div class="insight-meta">Average length this week</div>
+                        </article>
+                    </div>
+                </section>
+
+            </section>
+        </section>
+    </main>
+</div>
+
+@functions {
+    public string FormatMinutes(int minutes)
+    {
+        if (minutes <= 0) return "0m";
+        var h = minutes / 60;
+        var m = minutes % 60;
+        if (h <= 0) return $"{m}m";
+        if (m == 0) return $"{h}h";
+        return $"{h}h {m}m";
+    }
+}

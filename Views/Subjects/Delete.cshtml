@@ -6,8 +6,12 @@
 
 <link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
 
-<div class="center-column">
-    <div class="tasks-card">
+<div class="app-shell">
+    <main class="main-layout">
+        @await Html.PartialAsync("_Sidebar", null)
+
+        <section class="center-column">
+            <div class="tasks-card">
         <div class="card-title">DELETE SUBJECT</div>
 
         <div class="auth-alert" style="margin-bottom: 12px;">
@@ -18,7 +22,7 @@
 
         <div class="auth-alert" style="margin-bottom: 14px;">
             <strong>Warning:</strong> This will also delete all related
-            <strong>study sessions</strong> and <strong>study tasks</strong> under this subject.
+            <strong>study sessions</strong>, <strong>study tasks</strong>, <strong>topics</strong> under this subject.
         </div>
 
 
@@ -38,5 +42,7 @@
                 </a>
             </div>
         </form>
-    </div>
+            </div>
+        </section>
+    </main>
 </div>

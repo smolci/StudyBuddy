@@ -25,12 +25,14 @@ namespace StudyBuddy.Data
                 .HasIndex(s => new { s.UserId, s.Name })
                 .IsUnique();
 
+            // Subject -> StudySession (you already used Restrict)
             builder.Entity<StudySession>()
                 .HasOne(s => s.Subject)
                 .WithMany(su => su.StudySessions)
                 .HasForeignKey(s => s.SubjectId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // QuizQuestion composite PK
             builder.Entity<QuizQuestion>()
                 .HasKey(qq => new { qq.QuizId, qq.QuestionId });
 
@@ -46,18 +48,31 @@ namespace StudyBuddy.Data
                 .HasForeignKey(qq => qq.QuestionId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Subject -> StudyTask (Restrict)
             builder.Entity<StudyTask>()
                 .HasOne(t => t.Subject)
-                .WithMany(s => s.StudyTasks)            
+                .WithMany(s => s.StudyTasks)
                 .HasForeignKey(t => t.SubjectId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<StudyTask>()
                 .HasOne(t => t.User)
-                .WithMany(u => u.StudyTasks)            
+                .WithMany(u => u.StudyTasks)
                 .HasForeignKey(t => t.UserId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
 
+            // NEW: Subject -> Topics (CASCADE delete)
+            builder.Entity<Topic>()
+                .HasOne(t => t.Subject)
+                .WithMany(s => s.Topics)
+                .HasForeignKey(t => t.SubjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // OPTIONAL BUT RECOMMENDED:
+            // Unique topic names per subject (prevents duplicates like "Threads" twice)
+            builder.Entity<Topic>()
+                .HasIndex(t => new { t.SubjectId, t.Name })
+                .IsUnique();
         }
     }
 }

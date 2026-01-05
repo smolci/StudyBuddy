@@ -1,30 +1,43 @@
 @model StudyBuddy.Models.Topic
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Topic details";
 }
 
-<h1>Details</h1>
+<link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
 
-<div>
-    <h4>Topic</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Subject)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Subject.Name)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.TopicId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="app-shell">
+    <main class="main-layout">
+        @await Html.PartialAsync("_Sidebar", null)
+
+        <section class="center-column">
+            <div class="tasks-card">
+                <div class="card-title">TOPIC DETAILS</div>
+
+                <ul class="task-list">
+                    <li class="task-item" style="align-items:center;">
+                        <div class="task-left" style="cursor:default;">
+                            <div style="font-weight:600;">@Model.Name</div>
+                            <div style="color:var(--text-muted); font-size: 13px;">
+                                Subject: @(Model.Subject?.Name ?? "—")
+                            </div>
+                        </div>
+
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <a asp-action="Edit" asp-route-id="@Model.TopicId"
+                               class="chip" style="text-decoration:none;">
+                                Edit
+                            </a>
+
+                            <a asp-action="Index"
+                               class="chip chip-alt" style="text-decoration:none;">
+                                Back
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+        </section>
+    </main>
 </div>

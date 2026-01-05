@@ -6,34 +6,106 @@
 
 <link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
 
-<div class="center-column">
-    <div class="tasks-card">
-        <div class="card-title">EDIT SUBJECT</div>
+<div class="app-shell">
+    <main class="main-layout">
+        @await Html.PartialAsync("_Sidebar", null)
 
-        <div class="sidebar-section-title" style="margin-bottom: 12px;">
-            You may change the name of the subject here
-        </div>
+        <section class="center-column">
+            <div class="tasks-card">
+                <div class="card-title">EDIT SUBJECT</div>
 
-        <form asp-controller="Subjects" asp-action="Edit" method="post" class="auth-form">
-            @Html.AntiForgeryToken()
+                <div class="sidebar-section-title" style="margin-bottom: 12px;">
+                    You may change the name of the subject here
+                </div>
 
-            <input type="hidden" asp-for="SubjectId" />
+                <form asp-controller="Subjects" asp-action="Edit" method="post" class="auth-form">
+                    @Html.AntiForgeryToken()
 
-            <div class="field">
-                <label asp-for="Name"></label>
-                <input asp-for="Name" class="input" placeholder="e.g. Operating Systems" />
-                <span asp-validation-for="Name" class="field-error"></span>
+                    <input type="hidden" asp-for="SubjectId" />
+
+                    <div class="field">
+                        <label asp-for="Name"></label>
+                        <input asp-for="Name" class="input" placeholder="e.g. Operating Systems" />
+                        <span asp-validation-for="Name" class="field-error"></span>
+                    </div>
+
+                    <div class="timer-modal-actions">
+                        <button type="submit" class="btn-primary">Save</button>
+                        <a asp-action="Index" class="btn-secondary"
+                           style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                            Back
+                        </a>
+                    </div>
+                </form>
+
+                <!-- TOPICS SUBSECTION -->
+                <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.06);">
+                    <div class="sidebar-section-title" style="margin-bottom: 10px;">
+                        Topics for this subject
+                    </div>
+
+                    @if (Model.Topics == null || !Model.Topics.Any())
+                    {
+                        <div class="task-item" style="justify-content:flex-start;">
+                            <div style="color: var(--text-muted); font-size: 14px;">
+                                No topics yet.
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <ul class="task-list">
+                            @foreach (var t in Model.Topics.OrderBy(x => x.Name))
+                            {
+                                <li class="task-item" style="align-items:center;">
+                                    <div class="task-left" style="cursor: default;">
+                                        <span style="font-weight:600;">@t.Name</span>
+                                    </div>
+
+                                    <div style="display:flex; gap:10px; align-items:center;">
+                                        <!-- optional: go to full topic edit -->
+                                        <a asp-controller="Topics" asp-action="Edit" asp-route-id="@t.TopicId"
+                                            class="chip chip-alt" style="text-decoration:none;">
+                                                Edit
+                                        </a>
+
+
+                                        <!-- delete topic and return back here -->
+                                        <form asp-controller="Topics" asp-action="DeleteFromSubject" method="post" style="margin:0;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@t.TopicId" />
+                                            <input type="hidden" name="subjectId" value="@Model.SubjectId" />
+                                            <button type="submit"
+                                                    class="chip"
+                                                    style="border:none; cursor:pointer; background:#fde6d7; color:#6a373b;">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+
+                    <!-- quick add topic -->
+                    <form asp-controller="Topics" asp-action="CreateForSubject" method="post"
+                          style="margin-top: 12px; display:flex; gap:10px; align-items:center;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="subjectId" value="@Model.SubjectId" />
+                        <input name="name" class="input" placeholder="Add a new topic (e.g. Threads)" style="flex:1;" />
+                        <button type="submit" class="btn-add" style="border:none;">
+                            + Add topic
+                        </button>
+                    </form>
+
+                    <div style="margin-top:10px; color: var(--text-muted); font-size: 12px;">
+                        Tip: Topics are deleted automatically when you delete the subject.
+                    </div>
+                </div>
+
             </div>
-
-            <div class="timer-modal-actions">
-                <button type="submit" class="btn-primary">Save</button>
-                <a asp-action="Index" class="btn-secondary"
-                   style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
-                    Back
-                </a>
-            </div>
-        </form>
-    </div>
+        </section>
+    </main>
 </div>
 
 @section Scripts {
