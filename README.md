@@ -1,45 +1,88 @@
 # StudyBuddy
-studybuddy-cma0h0bnc5dbckfu.germanywestcentral-01.azurewebsites.net
 
-## Razvijalca
-Luka Karoli (63240138) in Aljaž Smole (63240293)
+🔗 **Spletna aplikacija:**  
+https://studybuddy-cma0h0bnc5dbckfu.germanywestcentral-01.azurewebsites.net
 
-## Opis
+---
 
-Razvila sva spletno aplikacijo StudyBuddy s katerim sva podprla porcese samostojnega učenja in priprave na izpite. Namen sistema je uporabnikom omogočiti organizirano in učinkovito učenje preko strukturiranja učnih vsebin, ponavljanja s pomočjo flashcardov ter preverjanja znanja s kvizi.
+## Avtorja
 
-Uporabnik lahko ustvari svoje predmete in teme, s čimer organizira učne materiale po področjih. Vsaka tem vsebuje flashcarde z vprašanji in odgovori, ki služijo ponavljanju snovi.
+- **Luka Karoli** (vpisna št.: 63240138)  
+- **Aljaž Smole** (vpisna št.: 63240293)
 
-Za preverjanje znanja je mogoče sestaviti kvize, sestavljene iz različnih vprašanj, ki omogočajo samostojno testiranje in ocenjevanje znanja.
+---
 
-Poleg tega sistem omogočal beleženje študijskih sej, kjer se shranjujej podatki o času in trajanju učenja ter obravnavanih temah. Na ta način uporabnik analizira svoje učne navade in spremljal, koliko časa posveča posameznim predmetom.
+## Opis sistema
 
-Sistem tako združuje organizacijo učnih vsebin, ponavljanje in preverjanje znanja. Namenjen predvsem študentom in dijakom, ki želijo izboljšati učinkovitost in motivacijo pri učenju.
+StudyBuddy je spletna aplikacija za podporo samostojnemu učenju in pripravi na izpite. Namen sistema je uporabnikom omogočiti bolj organizirano, pregledno in učinkovito učenje s pomočjo strukturiranja učnih vsebin, ter odstraniti nepotrebne moteče faktorje med učenjem. Aplikacija je namenjena tudi tistim, ki samo radi spremljajo kaj in koliko časa so porabili na neki zadevi (npr. projektu).
+Uporabnik lahko:
+- ustvari **predmete (Subjects)** in znotraj njih **teme (Topics)**,
+- sestavlja **kvize (Quizes)**, ki so sestavljeni iz različnih vprašanj,
+- beleži **študijske seje (Study sessions)**, kjer se shranjujejo podatki o trajanju učenja, času in obravnavanih temah.
 
-Entitete: user, subject, topic, flashcard, quiz, question, study_session.
+Na podlagi zbranih podatkov lahko uporabnik analizira svoje učne navade (**podstran Stats**) in spremlja, koliko časa posveča posameznim predmetom. Sistem tako združuje organizacijo učne snovi, aktivno ponavljanje in preverjanje znanja na enem mestu.
+
+---
+
+## Zaslonske slike aplikacije
+
+### Spletna aplikacija
+![Dashboard – pregled učenja](docs/images/web_dashboard.png)
+![Upravljanje predmetov in tem](docs/images/web_subjects.png)
+![Flashcardi](docs/images/web_flashcards.png)
+
+### Mobilna aplikacija
+![Mobilni prikaz – študijska seja](docs/images/mobile_session.png)
+![Mobilni prikaz – kviz](docs/images/mobile_quiz.png)
+
+---
+
+## Podatkovni model
+
+Spodaj je prikazan podatkovni model podatkovne baze, ki prikazuje glavne entitete sistema in njihove povezave.
+
+![Podatkovni model](docs/images/database_model.png)
+
+### Opis entitet
+
+- **User** – uporabnik sistema
+- **Subject** – učni predmet, ki pripada uporabniku
+- **Topic** – tema znotraj posameznega predmeta
+- **Quiz** – kviz, sestavljen iz več vprašanj
+- **Questions** – posamezno vprašanje v kvizu
+- **StudySession** – beleženje časa in trajanja učenja
+
+---
+
+## Razdelitev dela med študenta
+
+### Aljaž Smole
+- zasnova in implementacija podatkovnega modela,
+- razvoj backend logike (API, povezava z bazo),
+- implementacija beleženja študijskih sej,
+- postavitev Azure SQL baze in Azure Web App okolja,
+- integracija aplikacije z oblačnimi storitvami.
+
+### Luka Karoli
+- razvoj uporabniškega vmesnika (spletna aplikacija),
+- implementacija upravljanja predmetov, uporabnikih podatkov, prikaz statistike o učenju,
+- implementacija kvizov in vprašanj,
+- oblikovanje uporabniške izkušnje (UX).
+
+Pri zasnovi aplikacije (idejna zasnova, podatkovni model, izbira uporabljene infrastrukture in tehnologij) sva odločitve sprejemala skupaj v okviru vaj pri predmetu. Velik del funkcionalnosti sva tudi implementirala skupno že med samimi demonstracijami na vajah, vključno z razvojem REST API-ja, uporabo oblačne infrastrukture ter povezavo s podatkovno bazo.
+
+Kljub delitvi nalog sva pri razvoju aplikacije tesno sodelovala. Jaz, Luka Karoli, sem se v večji meri osredotočil na razvoj uporabniškega vmesnika (front-end), medtem ko se je Aljaž Smole pretežno ukvarjal z razvojem strežniškega dela aplikacije (back-end). Vendar pa razvoj ni potekal povsem ločeno, saj je delovanje sistema zahtevalo dobro razumevanje obeh plasti.
+
+---
 
 ## Uporabljene tehnologije
-.NET 10, Azure (Database in Web App)
 
+- **.NET 10**
+- **ASP.NET Core (MVC / API)**
+- **Azure SQL Database**
+- **Azure Web App**
+- **Entity Framework Core**
+- **GitHub**
+- **Umetna inteligenca** (ideje za različne funkcionalnosti aplikacije, vizualna vsebina, ...)
 
-# StudyBuddy
-
-## Developers
-Luka Karoli (63240138) and Aljaž Smole (63240293)
-
-## Description
-
-We developed the StudyBuddy web application to support independent learning and exam preparation processes. The purpose of the system is to enable users to learn in an organized and effective manner by structuring learning content, repeating it with flashcards, and testing their knowledge with quizzes.
-
-Users can create their own subjects and topics, thereby organizing learning materials by area. Each topic contains flashcards with questions and answers that serve to review the material.
-
-To test knowledge, it is possible to create quizzes consisting of various questions that enable independent testing and assessment of knowledge.
-
-In addition, the system allows users to record their study sessions, storing data on the time and duration of learning and the topics covered. In this way, users can analyze their learning habits and monitor how much time they devote to individual subjects.
-
-The system thus combines the organization of learning content, repetition, and knowledge testing. It is primarily intended for students who want to improve their learning efficiency and motivation.
-
-Entities: user, subject, topic, flashcard, quiz, question, study_session.
-
-## Technologies used
-.NET 10, Azure (Database and Web App), ...
+---
