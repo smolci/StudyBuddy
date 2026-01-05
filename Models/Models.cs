@@ -136,10 +136,11 @@ namespace StudyBuddy.Models
     public class StudyTask
     {
         [Key]
-        public int TaskId { get; set; }
-
+        public int TaskId { get; set; }           
         [Required]
-        public required string Description { get; set; }
+        public required string Description { get; set; } 
+        public bool IsCompleted { get; set; } = false;
+        public int? DurationMinutes { get; set; }
 
         [Required]
         public required string UserId { get; set; }

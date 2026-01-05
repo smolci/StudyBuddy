@@ -82,7 +82,7 @@ namespace StudyBuddy.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TaskId,Description,SubjectId")] StudyTask studyTask)
+        public async Task<IActionResult> Create([Bind("TaskId,Description,SubjectId,DurationMinutes")] StudyTask studyTask)
         {
             var userId = CurrentUserId;
             if (string.IsNullOrEmpty(userId)) return Challenge();
@@ -138,7 +138,7 @@ namespace StudyBuddy.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TaskId,Description,SubjectId")] StudyTask studyTask)
+        public async Task<IActionResult> Edit(int id, [Bind("TaskId,Description,SubjectId,DurationMinutes")] StudyTask studyTask)
         {
             if (id != studyTask.TaskId) return NotFound();
 
@@ -233,7 +233,8 @@ namespace StudyBuddy.Controllers
             {
                 Description = dto.Description.Trim(),
                 UserId = userId,
-                SubjectId = subject.SubjectId
+                SubjectId = subject.SubjectId,
+                DurationMinutes = dto.DurationMinutes
             };
 
             _context.StudyTasks.Add(studyTask);
@@ -242,9 +243,31 @@ namespace StudyBuddy.Controllers
             return Ok(new
             {
                 success = true,
-                task = new { id = studyTask.TaskId, description = studyTask.Description, subjectName = subject.Name }
+                task = new { id = studyTask.TaskId, description = studyTask.Description, subjectName = subject.Name, duration = studyTask.DurationMinutes }
             });
         }
-        public record QuickAddDto(string Description, string SubjectName);
+
+        public record QuickAddDto(string Description, string SubjectName, int DurationMinutes);
+
+        public record CompleteTaskDto(int TaskId);
+
+        [HttpPost]
+        public async Task<IActionResult> SetCompleted([FromBody] CompleteTaskDto dto)
+        {
+            var userId = CurrentUserId;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var task = await _context.StudyTasks
+                .FirstOrDefaultAsync(t => t.TaskId == dto.TaskId && t.UserId == userId);
+
+            if (task == null)
+                return NotFound();
+
+            task.IsCompleted = true;
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }

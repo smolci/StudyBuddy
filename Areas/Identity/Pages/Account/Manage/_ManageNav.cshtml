@@ -1,8 +1,26 @@
-<link rel="stylesheet" href="~/css/Index.css" />
+@inject SignInManager<User> SignInManager
+@{
+    var currentPage = ViewContext.RouteData.Values["page"]?.ToString()?.ToLower() ?? "";
+    
+    bool IsActive(string page) => currentPage.EndsWith(page.ToLower());
+}
 
-<ul class="sidebar nav-list" style="width: 300px;">
-    <li class="nav-item active"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index"><span>Profile</span></a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email"><span>Email</span></a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword"><span>Password</span></a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData"><span>Personal data</span></a></li>
-</ul>
+<link rel="stylesheet" href="~/css/Index.css" />
+<div class="sidebar" style="width: auto;">
+    <div class="sidebar-section-title">Navigation</div>
+
+    <ul class="nav-list" style="padding-left: 0; margin-bottom: 0;">
+        <li class="nav-item @(IsActive("/Index") ? "active" : "")">
+            <a class="nav-link" asp-page="./Index"><span>Profile</span></a>
+        </li>
+        <li class="nav-item @(IsActive("/Email") ? "active" : "")">
+            <a class="nav-link" asp-page="./Email"><span>Email</span></a>
+        </li>
+        <li class="nav-item @(IsActive("/ChangePassword") ? "active" : "")">
+            <a class="nav-link" asp-page="./ChangePassword"><span>Password</span></a>
+        </li>
+        <li class="nav-item @(IsActive("/PersonalData") ? "active" : "")">
+            <a class="nav-link" asp-page="./PersonalData"><span>Personal data</span></a>
+        </li>
+    </ul>
+</div>

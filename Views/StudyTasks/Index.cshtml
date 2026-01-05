@@ -2,8 +2,11 @@
 
 @{
     ViewData["Title"] = "Study Tasks";
-}
 
+    // Separate completed vs incomplete
+    var incompleteTasks = Model?.Where(t => !t.IsCompleted).ToList() ?? new List<StudyBuddy.Models.StudyTask>();
+    var completedTasks = Model?.Where(t => t.IsCompleted).ToList() ?? new List<StudyBuddy.Models.StudyTask>();
+}
 <link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
 
 <div class="app-shell">
@@ -12,65 +15,95 @@
 
         <section class="center-column">
             <div class="tasks-card">
-        <div class="card-title">STUDY TASKS</div>
+                <div class="card-title">INCOMPLETE TASKS</div>
+                @if (!incompleteTasks.Any())
+                {
+                    <div style="color: var(--text-muted); font-size: 14px; margin: 8px 0;">
+                        No incomplete tasks.
+                    </div>
+                }
+                else
+                {
+                    <ul class="task-list">
+                        @foreach (var task in incompleteTasks)
+                        {
+                            <li class="task-item" style="align-items: center;">
+                                <div class="task-left" style="cursor: default; flex: 1;">
+                                    <div style="font-weight: 600;">
+                                        @task.Description, Duration: @($"{task.DurationMinutes}m")
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--text-muted);">
+                                        User: @task.User?.Id, Subject: @task.Subject?.Name
+                                    </div>
+                                </div>
 
-        <h1 style="margin: 0 0 12px; font-size: 22px; color: var(--text-main);">
-            Your study tasks
-        </h1>
+                                <div style="display:flex; gap:10px; align-items:center;">
+                                    <a asp-action="Details" asp-route-id="@task.TaskId"
+                                       class="chip chip-alt" style="text-decoration:none;">
+                                        Details
+                                    </a>
 
-        @if (Model == null || !Model.Any())
-        {
-            <div class="task-item" style="justify-content: flex-start;">
-                <div style="color: var(--text-muted); font-size: 14px;">
-                    No study tasks yet.
+                                    <a asp-action="Edit" asp-route-id="@task.TaskId"
+                                       class="chip" style="text-decoration:none;">
+                                        Edit
+                                    </a>
+
+                                    <a asp-action="Delete" asp-route-id="@task.TaskId"
+                                       class="chip" style="text-decoration:none; background:#fde6d7; color:#6a373b;">
+                                        Delete
+                                    </a>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+
+                <div style="margin-top: 14px;">
+                    <a asp-action="Create" class="btn-add" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        + Add study task
+                    </a>
                 </div>
             </div>
 
-            <div style="margin-top: 12px;">
-                <a asp-action="Create" class="btn-add" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
-                    + Add study task
-                </a>
-            </div>
-        }
-        else
-        {
-            <ul class="task-list">
-                @foreach (var item in Model)
+            @* Completed tasks section *@
+            <div class="tasks-card" style="margin-top: 20px; opacity: 0.7;">
+                <div class="card-title">COMPLETED TASKS</div>
+                @if (!completedTasks.Any())
                 {
-                    <li class="task-item" style="align-items: center;">
-                        <div class="task-left" style="cursor: default; flex: 1;">
-                            <span style="font-weight:600;">@item.Description</span>
-                            <div style="font-size: 12px; color: var(--text-muted);">
-                                User: @item.User?.Id, Subject: @item.Subject?.Name
-                            </div>
-                        </div>
-
-                        <div style="display:flex; gap:10px; align-items:center;">
-                            <a asp-action="Details" asp-route-id="@item.TaskId"
-                               class="chip chip-alt" style="text-decoration:none;">
-                                Details
-                            </a>
-
-                            <a asp-action="Edit" asp-route-id="@item.TaskId"
-                               class="chip" style="text-decoration:none;">
-                                Edit
-                            </a>
-
-                            <a asp-action="Delete" asp-route-id="@item.TaskId"
-                               class="chip" style="text-decoration:none; background:#fde6d7; color:#6a373b;">
-                                Delete
-                            </a>
-                        </div>
-                    </li>
+                    <div style="color: var(--text-muted); font-size: 14px; margin: 8px 0;">
+                        No completed tasks yet.
+                    </div>
                 }
-            </ul>
+                else
+                {
+                    <ul class="task-list">
+                        @foreach (var task in completedTasks)
+                        {
+                            <li class="task-item" style="align-items: center; text-decoration: line-through; opacity: 0.6;">
+                                <div class="task-left" style="cursor: default; flex: 1;">
+                                    <div style="font-weight: 600;">
+                                        @task.Description, Duration: @($"{task.DurationMinutes}m")
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--text-muted);">
+                                        User: @task.User?.Id, Subject: @task.Subject?.Name
+                                    </div>
+                                </div>
 
-            <div style="margin-top: 14px;">
-                <a asp-action="Create" class="btn-add" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
-                    + Add study task
-                </a>
-            </div>
-        }
+                                <div style="display:flex; gap:10px; align-items:center;">
+                                    <a asp-action="Details" asp-route-id="@task.TaskId"
+                                       class="chip chip-alt" style="text-decoration:none;">
+                                        Details
+                                    </a>
+
+                                    <a asp-action="Delete" asp-route-id="@task.TaskId"
+                                       class="chip" style="text-decoration:none; background:#fde6d7; color:#6a373b;">
+                                        Delete
+                                    </a>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
             </div>
         </section>
     </main>

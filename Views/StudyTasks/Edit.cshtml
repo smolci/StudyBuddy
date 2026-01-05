@@ -35,6 +35,12 @@
                 <span asp-validation-for="SubjectId" class="field-error"></span>
             </div>
 
+            <div class="field">
+                <label asp-for="DurationMinutes"></label>
+                <input asp-for="DurationMinutes" class="input" placeholder="Enter task duration in minutes" />
+                <span asp-validation-for="DurationMinutes" class="field-error"></span>
+            </div>
+
             <div class="timer-modal-actions">
                 <button type="submit" class="btn-primary">Save</button>
                 <a asp-action="Index" class="btn-secondary"

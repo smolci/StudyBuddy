@@ -94,7 +94,7 @@
                     <ul class="task-list">
                         @foreach (var task in Model.StudyTasks)
                         {
-                            <li class="task-item">
+                            <li class="task-item" data-task-id="@task.TaskId">
                                 <label class="task-left">
                                     <input type="checkbox" class="task-checkbox-input" />
                                     <span class="task-checkbox"></span>
@@ -106,6 +106,10 @@
                                         }
                                     </div>
                                 </label>
+                                @if (task.DurationMinutes > 0)
+                                {
+                                    <span class="task-duration">@($"{task.DurationMinutes}m")</span>
+                                }
                             </li>
                         }
                     </ul>
@@ -230,7 +234,8 @@
     <script>
         window.studyBuddyConfig = {
             createStudySessionUrl: '@Url.Action("CreateFromTimer", "StudySessions")',
-            createQuickTaskUrl: '@Url.Action("CreateFromQuickAdd", "StudyTasks")'
+            createQuickTaskUrl: '@Url.Action("CreateFromQuickAdd", "StudyTasks")',
+            setCompletedUrl: '@Url.Action("SetCompleted", "StudyTasks")'
         };
     </script>
 
