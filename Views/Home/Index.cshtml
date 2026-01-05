@@ -3,7 +3,6 @@
 }
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
     <title>Study Buddy</title>
@@ -13,6 +12,11 @@
 <body>
 @model StudyBuddy.Models.HomeViewModel
 
+@{
+    var scaleMaxMinutes = 8 * 60;
+    var stats = Model.Stats;
+}
+
     <div class="app-shell">
         <main class="main-layout">
             <!-- Sidebar -->
@@ -21,25 +25,55 @@
             <!-- Center column -->
             <section class="center-column">
                 <section class="focus-card">
+
+                    <!-- WEEKLY STATS (dynamic, same as Stats page) -->
                     <section class="weekly-card">
                         <div class="weekly-header">
                             <div>
                                 <div class="weekly-label">Weekly focus</div>
-                                <div class="weekly-time">6h 40m</div>
+                                <div class="weekly-time">@FormatMinutes(stats?.TotalWeekMinutes ?? 0)</div>
                             </div>
-                            <div class="weekly-change">+12%</div>
+
+                            <div class="weekly-change">
+                                @($"{(stats?.WeekChangePercent ?? 0):+0;-0;0}%")
+                            </div>
                         </div>
-                        <div class="weekly-chart">
-                            <div class="chart-bar"></div>
-                            <div class="chart-bar"></div>
-                            <div class="chart-bar"></div>
-                            <div class="chart-bar"></div>
-                            <div class="chart-bar"></div>
-                            <div class="chart-bar"></div>
-                            <div class="chart-bar"></div>
+
+                        <div class="weekly-chart-axis">
+                            <!-- Y axis -->
+                            <div class="y-axis">
+                                <div class="y-tick">8h</div>
+                                <div class="y-tick">7h</div>
+                                <div class="y-tick">6h</div>
+                                <div class="y-tick">5h</div>
+                                <div class="y-tick">4h</div>
+                                <div class="y-tick">3h</div>
+                                <div class="y-tick">2h</div>
+                                <div class="y-tick">1h</div>
+                            </div>
+
+                            <!-- Bars -->
+                            <div class="weekly-chart weekly-chart-with-labels">
+                                @foreach (var d in (stats?.Days ?? new List<StudyBuddy.Models.ViewModels.DayStat>()))
+                                {
+                                    var capped = Math.Min(d.Minutes, scaleMaxMinutes);
+                                    var pct = (int)Math.Round((capped / (double)scaleMaxMinutes) * 100.0);
+
+                                    if (d.Minutes > 0) pct = Math.Max(pct, 6);
+
+                                    <div class="chart-col">
+                                        <div class="chart-bar"
+                                             style="height:@pct%;"
+                                             data-tooltip="@($"{d.DayName} — {FormatMinutes(d.Minutes)} focus")">
+                                        </div>
+                                        <div class="chart-day">@d.DayName.Substring(0, 3)</div>
+                                    </div>
+                                }
+                            </div>
                         </div>
                     </section>
 
+                    <!-- TIMER -->
                     <div class="timer-card">
                         <div class="timer-subject-label" id="timerSubjectLabel"></div>
                         <div class="timer-circle">
@@ -52,6 +86,7 @@
                             <button class="btn-pill secondary">Reset</button>
                         </div>
                     </div>
+
                 </section>
 
                 <section class="tasks-card">
@@ -61,7 +96,6 @@
                         {
                             <li class="task-item">
                                 <label class="task-left">
-                                    <!-- Checkbox default unchecked for now; update to use task.Completed when available -->
                                     <input type="checkbox" class="task-checkbox-input" />
                                     <span class="task-checkbox"></span>
                                     <div>
@@ -86,11 +120,6 @@
                     <div class="quick-tip">Tip: Press <strong>Enter</strong> to add quickly.</div>
                 </section>
             </section>
-
-            @* Right column (če jo boš kdaj rabil)
-            <section class="right-column">
-            </section>
-            *@
         </main>
     </div>
 
@@ -207,5 +236,16 @@
 
     <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
-
 </html>
+
+@functions {
+    public string FormatMinutes(int minutes)
+    {
+        if (minutes <= 0) return "0m";
+        var h = minutes / 60;
+        var m = minutes % 60;
+        if (h <= 0) return $"{m}m";
+        if (m == 0) return $"{h}h";
+        return $"{h}h {m}m";
+    }
+}
