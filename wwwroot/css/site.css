@@ -40,6 +40,17 @@ body {
   margin-bottom: 60px;
 }
 
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url('/images/sbbg.png') no-repeat center center;
+  background-size: cover;
+  opacity: 0.5;
+  z-index: -1;
+  pointer-events: none;
+}
+
 /* Topbar styles */
 .topbar {
   display: flex;

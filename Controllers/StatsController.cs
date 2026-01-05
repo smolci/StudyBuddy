@@ -25,6 +25,7 @@ namespace StudyBuddy.Controllers
 
         private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+        // GET: /Stats
         [Authorize]
         public async Task<IActionResult> Index()
         {

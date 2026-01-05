@@ -44,7 +44,7 @@ public class HomeController : Controller
         var tasks = await _context.StudyTasks
             .AsNoTracking()
             .Include(t => t.Subject)
-            .Where(t => t.UserId == user.Id)
+            .Where(t => t.UserId == user.Id && !t.IsCompleted)
             .ToListAsync();
 
         // -----------------------------
@@ -155,6 +155,12 @@ public class HomeController : Controller
         _context.Subjects.Add(subject);
         await _context.SaveChangesAsync();
 
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            return LocalRedirect(returnUrl);
+        }
+
+        // If a returnUrl was provided and is local, redirect back there; otherwise go to Index
         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
         {
             return LocalRedirect(returnUrl);

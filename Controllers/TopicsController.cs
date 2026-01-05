@@ -56,6 +56,7 @@ namespace StudyBuddy.Controllers
                 .Where(s => s.UserId == userId)
                 .ToListAsync();
 
+            ViewBag.Subjects = await _context.Subjects.ToListAsync();
             return View(topic);
         }
 
@@ -219,6 +220,7 @@ namespace StudyBuddy.Controllers
                 .Where(s => s.UserId == userId)
                 .ToListAsync();
 
+            ViewBag.Subjects = await _context.Subjects.ToListAsync();
             return View(topic);
         }
 
