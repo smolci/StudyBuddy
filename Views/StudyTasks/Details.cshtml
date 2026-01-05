@@ -51,6 +51,23 @@
                     </div>
                 </li>
             }
+            <li class="task-item">
+                <div class="task-left" style="cursor: default;">
+                    <span style="font-weight:600;">Duration</span>
+                </div>
+                <div class="task-left" style="cursor: default;">
+                    <span>@Model?.DurationMinutes</span>
+                </div>
+            </li>
+
+            <li class="task-item">
+                <div class="task-left" style="cursor: default;">
+                    <span style="font-weight:600;">Completed</span>
+                </div>
+                <div class="task-left" style="cursor: default;">
+                    <span>@Model?.IsCompleted</span>
+                </div>
+            </li>
         </ul>
 
         <div class="divider"></div>

@@ -347,12 +347,37 @@
             const checkbox = li.querySelector(".task-checkbox-input");
             if (!checkbox) return;
 
-            checkbox.addEventListener("change", () => {
-                if (checkbox.checked) {
-                    li.classList.add("completed");
-                    setTimeout(() => {
-                        li.remove();
-                    }, 300);
+            const taskId = li.dataset.taskId;
+
+            checkbox.addEventListener("change", async () => {
+                if (!checkbox.checked) return;
+
+                const taskId = li.dataset.taskId;
+                const completedUrl = window.studyBuddyConfig?.setCompletedUrl;
+                
+                if (!taskId) {
+                    console.error("taskId is missing on li element");
+                    return;
+                }
+
+                try {
+                    const res = await fetch(completedUrl, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                        body: JSON.stringify({ taskId: parseInt(taskId) })
+                    });
+
+                    if (res.ok) {
+                        li.classList.add("completed");
+                        setTimeout(() => li.remove(), 300);
+                    } else {
+                        console.error("Failed to complete task", await res.text());
+                        checkbox.checked = false;
+                    }
+
+                } catch (err) {
+                    console.error("Failed to complete task", err);
+                    checkbox.checked = false;
                 }
             });
         }
@@ -482,7 +507,11 @@
                             method: "POST",
                             credentials: "same-origin",
                             headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                            body: JSON.stringify({ description: rawTaskName, subjectName: subject })
+                            body: JSON.stringify({ 
+                                description: rawTaskName, 
+                                subjectName: subject, 
+                                durationMinutes: minutes 
+                            })
                         });
 
                         if (!res.ok) {

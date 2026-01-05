@@ -31,7 +31,7 @@ public class HomeController : Controller
 
         var tasks = await _context.StudyTasks
             .Include(t => t.Subject)
-            .Where(t => t.UserId == user.Id)
+            .Where(t => t.UserId == user.Id && !t.IsCompleted)
             .ToListAsync();
 
         var model = new HomeViewModel

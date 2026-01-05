@@ -31,6 +31,12 @@
                 <span asp-validation-for="SubjectId" class="field-error"></span>
             </div>
 
+            <div class="field">
+                <label asp-for="DurationMinutes"></label>
+                <input asp-for="DurationMinutes" class="input" placeholder="e.g. 30" />
+                <span asp-validation-for="DurationMinutes" class="field-error"></span>
+            </div>
+
             <div class="timer-modal-actions">
                 <button type="submit" class="btn-primary">Create</button>
                 <a asp-action="Index" class="btn-secondary"
