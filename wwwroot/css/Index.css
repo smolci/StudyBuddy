@@ -1,3 +1,7 @@
+html, body {
+    height: 100%;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -8,7 +12,17 @@ body {
     font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background: var(--bg);
     color: var(--text-main);
+
+    position: relative;
+    min-height: 100vh;
+    margin: 0;
+
+    /* ✅ HARD OVERRIDE če ti Bootstrap/nek drug css centrira page */
+    display: block !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
 }
+
 
 .app-shell {
     display: flex;
@@ -1412,12 +1426,6 @@ body {
 /* insights grid variant for 3 cards */
 .insights-grid-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-body {
-    position: relative;
-    min-height: 100vh;
-    margin: 0;
 }
 
 /* Background layer */
