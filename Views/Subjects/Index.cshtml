@@ -12,62 +12,99 @@
 
         <section class="center-column">
             <div class="tasks-card">
-        <div class="card-title">SUBJECTS</div>
+                <div class="card-title">SUBJECTS</div>
 
-        <h1 style="margin: 0 0 12px; font-size: 22px; color: var(--text-main);">
-            Your subjects
-        </h1>
+                <h1 style="margin: 0 0 12px; font-size: 22px; color: var(--text-main);">
+                    Your subjects
+                </h1>
 
-        @if (Model == null || !Model.Any())
-        {
-            <div class="task-item" style="justify-content: flex-start;">
-                <div style="color: var(--text-muted); font-size: 14px;">
-                    No subjects yet.
-                </div>
-            </div>
-
-            <div style="margin-top: 12px;">
-                <a asp-action="Create" class="btn-add" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
-                    + Add subject
-                </a>
-            </div>
-        }
-        else
-        {
-            <ul class="task-list">
-                @foreach (var item in Model)
+                @if (Model == null || !Model.Any())
                 {
-                    <li class="task-item" style="align-items: center;">
-                        <div class="task-left" style="cursor: default;">
-                            <span style="font-weight:600;">@item.Name</span>
+                    <div class="task-item" style="justify-content: flex-start;">
+                        <div style="color: var(--text-muted); font-size: 14px;">
+                            No subjects yet.
                         </div>
+                    </div>
 
-                        <div style="display:flex; gap:10px; align-items:center;">
-                            <a asp-action="Details" asp-route-id="@item.SubjectId"
-                               class="chip chip-alt" style="text-decoration:none;">
-                                Details
-                            </a>
-
-                            <a asp-action="Edit" asp-route-id="@item.SubjectId"
-                               class="chip" style="text-decoration:none;">
-                                Edit
-                            </a>
-
-                            <a asp-action="Delete" asp-route-id="@item.SubjectId"
-                               class="chip" style="text-decoration:none; background:#fde6d7; color:#6a373b;">
-                                Delete
-                            </a>
-                        </div>
-                    </li>
+                    <div style="margin-top: 12px;">
+                        <a asp-action="Create" class="btn-add" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                            + Add subject
+                        </a>
+                    </div>
                 }
-            </ul>
+                else
+                {
+                    <ul class="task-list">
+                        @foreach (var item in Model.OrderBy(s => s.Name))
+                        {
+                            <li class="task-item" style="align-items: flex-start;">
+                                <div style="flex:1;">
+                                    <!-- Subject header row -->
+                                    <div style="display:flex; justify-content:space-between; gap:12px; align-items:center;">
+                                        <div class="task-left" style="cursor: default;">
+                                            <span style="font-weight:600;">@item.Name</span>
+                                        </div>
 
-            <div style="margin-top: 14px;">
-                <a asp-action="Create" class="btn-add" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
-                    + Add subject
-                </a>
-            </div>
-        }
+                                        <div style="display:flex; gap:10px; align-items:center;">
+                                            <a asp-action="Details" asp-route-id="@item.SubjectId"
+                                               class="chip chip-alt" style="text-decoration:none;">
+                                                Details
+                                            </a>
+
+                                            <a asp-action="Edit" asp-route-id="@item.SubjectId"
+                                               class="chip" style="text-decoration:none;">
+                                                Edit
+                                            </a>
+
+                                            <a asp-action="Delete" asp-route-id="@item.SubjectId"
+                                               class="chip" style="text-decoration:none; background:#fde6d7; color:#6a373b;">
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <!-- Topics under subject -->
+                                    <div style="margin-top:10px;">
+                                        @if (item.Topics == null || !item.Topics.Any())
+                                        {
+                                            <div style="color:var(--text-muted); font-size:13px;">
+                                                No topics yet.
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                                                @foreach (var t in item.Topics.OrderBy(t => t.Name))
+                                                {
+                                                    <a asp-controller="Topics" asp-action="Edit" asp-route-id="@t.TopicId"
+                                                       class="chip chip-alt"
+                                                       style="text-decoration:none;">
+                                                        @t.Name
+                                                    </a>
+                                                }
+                                            </div>
+                                        }
+
+                                        <!-- Add topic quick action (goes to subject edit where your topic manager is) -->
+                                        <div style="margin-top:10px;">
+                                            <a asp-action="Edit" asp-route-id="@item.SubjectId"
+                                               class="chip"
+                                               style="text-decoration:none;">
+                                                + Manage topics
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+
+                    <div style="margin-top: 14px;">
+                        <a asp-action="Create" class="btn-add" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                            + Add subject
+                        </a>
+                    </div>
+                }
             </div>
         </section>
     </main>

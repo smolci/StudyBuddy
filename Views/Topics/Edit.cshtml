@@ -2,44 +2,41 @@
 @model StudyBuddy.Models.Topic
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit topic";
+    var subjectTopics = ViewBag.SubjectTopics as IEnumerable<StudyBuddy.Models.Topic> ?? Enumerable.Empty<StudyBuddy.Models.Topic>();
 }
+
+<link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
 
 <div class="app-shell">
     <main class="main-layout">
         @await Html.PartialAsync("_Sidebar", null)
 
         <section class="center-column">
-            <h1>Edit</h1>
+            <div class="tasks-card">
+                <div class="card-title">EDIT TOPIC</div>
 
-            <h4>Topic</h4>
-            <hr />
-            <div class="row">
-                <div class="col-md-4">
-                    <form asp-action="Edit">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <input type="hidden" asp-for="TopicId" />
-                        <div class="form-group">
-                            <label asp-for="Name" class="control-label"></label>
-                            <input asp-for="Name" class="form-control" />
-                            <span asp-validation-for="Name" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="SubjectId" class="control-label"></label>
-                            <select asp-for="SubjectId" class="form-control" asp-items="ViewBag.SubjectId"></select>
-                            <span asp-validation-for="SubjectId" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" value="Save" class="btn btn-primary" />
-                        </div>
-                    </form>
+                <div class="sidebar-section-title" style="margin-bottom: 12px;">
+                    You may change the topic name (and the subject it belongs to) here
                 </div>
-            </div>
 
-            <div>
-                <a asp-action="Index">Back to List</a>
-            </div>
-        </section>
-    </main>
-</div>
+                <form asp-action="Edit" method="post" class="auth-form">
+                    @Html.AntiForgeryToken()
 
+                    <input type="hidden" asp-for="TopicId" />
+
+                    <div class="field">
+                        <label asp-for="Name"></label>
+                        <input asp-for="Name" class="input" placeholder="e.g. Scheduling" />
+                        <span asp-validation-for="Name" class="field-error"></span>
+                    </div>
+
+                    <div class="field">
+                        <label asp-for="SubjectId">Subject</label>
+                        <select asp-for="SubjectId" class="input" asp-items="ViewBag.SubjectId"></select>
+                        <span asp-validation-for="SubjectId" class="field-error"></span>
+                    </div>
+
+                    <div class="timer-modal-actions">
+                        <button type="submit" class="btn-primary">Save</button>
+</form>

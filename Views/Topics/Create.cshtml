@@ -2,42 +2,48 @@
 @model StudyBuddy.Models.Topic
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create topic";
 }
+
+<link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
 
 <div class="app-shell">
     <main class="main-layout">
         @await Html.PartialAsync("_Sidebar", null)
 
         <section class="center-column">
-            <h1>Create</h1>
+            <div class="tasks-card">
+                <div class="card-title">CREATE TOPIC</div>
 
-            <h4>Topic</h4>
-            <hr />
-            <div class="row">
-                <div class="col-md-4">
-                    <form asp-action="Create">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <div class="form-group">
-                            <label asp-for="Name" class="control-label"></label>
-                            <input asp-for="Name" class="form-control" />
-                            <span asp-validation-for="Name" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="SubjectId" class="control-label"></label>
-                            <select asp-for="SubjectId" class ="form-control" asp-items="ViewBag.SubjectId"></select>
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" value="Create" class="btn btn-primary" />
-                        </div>
-                    </form>
-                </div>
-            </div>
+                <form asp-action="Create" method="post" class="auth-form">
+                    @Html.AntiForgeryToken()
 
-            <div>
-                <a asp-action="Index">Back to List</a>
+                    <div class="field">
+                        <label asp-for="Name"></label>
+                        <input asp-for="Name" class="input" placeholder="e.g. Threads" />
+                        <span asp-validation-for="Name" class="field-error"></span>
+                    </div>
+
+                    <div class="field">
+                        <label asp-for="SubjectId">Subject</label>
+                        <select asp-for="SubjectId" class="input" asp-items="ViewBag.SubjectId"></select>
+                        <span asp-validation-for="SubjectId" class="field-error"></span>
+                    </div>
+
+                    <div class="timer-modal-actions">
+                        <button type="submit" class="btn-primary">Create</button>
+                        <a asp-action="Index" class="btn-secondary"
+                           style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                            Back
+                        </a>
+                    </div>
+                </form>
+
             </div>
         </section>
     </main>
 </div>
 
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

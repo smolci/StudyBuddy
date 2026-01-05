@@ -1,12 +1,11 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudyBuddy.Data;
 using StudyBuddy.Models;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
 
 namespace StudyBuddy.Controllers
 {
@@ -29,9 +28,27 @@ namespace StudyBuddy.Controllers
             var userId = CurrentUserId;
             if (string.IsNullOrEmpty(userId)) return Challenge();
 
-            var studyBuddyContext = _context.Subjects
-                .Include(s => s.User)
-                .Where(s => s.UserId == userId);
+            // ✅ Projection guarantees topics are loaded (even if Include/lazy loading gets weird)
+            var subjects = await _context.Subjects
+                .Where(s => s.UserId == userId)
+                .OrderBy(s => s.Name)
+                .Select(s => new Subject
+                {
+                    SubjectId = s.SubjectId,
+                    Name = s.Name,
+                    UserId = s.UserId,
+                    Topics = s.Topics
+                        .OrderBy(t => t.Name)
+                        .Select(t => new Topic
+                        {
+                            TopicId = t.TopicId,
+                            Name = t.Name,
+                            SubjectId = t.SubjectId
+                        })
+                        .ToList()
+                })
+                .AsNoTracking()
+                .ToListAsync();
 
             var currentUser = await _userManager.GetUserAsync(User);
             ViewBag.DisplayName =
@@ -40,8 +57,7 @@ namespace StudyBuddy.Controllers
                 _userManager.GetUserName(User) ??
                 "user";
 
-            var subjects = await studyBuddyContext.ToListAsync();
-            ViewBag.Subjects = subjects; // expose to sidebar
+            ViewBag.Subjects = subjects; // sidebar
 
             return View(subjects);
         }
@@ -55,14 +71,16 @@ namespace StudyBuddy.Controllers
             if (string.IsNullOrEmpty(userId)) return Challenge();
 
             var subject = await _context.Subjects
-                .Include(s => s.User)
+                .Include(s => s.Topics)
                 .FirstOrDefaultAsync(m => m.SubjectId == id && m.UserId == userId);
 
             if (subject == null) return NotFound();
 
-            // expose user's subjects for sidebar
-            var subjects = await _context.Subjects.Where(s => s.UserId == userId).ToListAsync();
-            ViewBag.Subjects = subjects;
+            ViewBag.Subjects = await _context.Subjects
+                .Where(s => s.UserId == userId)
+                .OrderBy(s => s.Name)
+                .AsNoTracking()
+                .ToListAsync();
 
             return View(subject);
         }
@@ -70,7 +88,6 @@ namespace StudyBuddy.Controllers
         // GET: Subjects/Create
         public IActionResult Create()
         {
-            // UserId se nastavi sam v POST, dropdown ne rabimo
             return View();
         }
 
@@ -79,14 +96,10 @@ namespace StudyBuddy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("SubjectId,Name")] Subject subject)
         {
-            TempData["CreateHit"] = "POST Create was called";
             var userId = CurrentUserId;
             if (string.IsNullOrEmpty(userId)) return Challenge();
 
-            // Nastavi ownerja takoj (ker ni v formi)
             subject.UserId = userId;
-
-            // Če imaš [Required] na UserId, je lahko ModelState že v errorju -> odstranimo ga
             ModelState.Remove(nameof(Subject.UserId));
 
             if (!ModelState.IsValid)
@@ -101,12 +114,10 @@ namespace StudyBuddy.Controllers
             }
             catch (DbUpdateException)
             {
-                // zaradi Unique index (UserId, Name) ali drugih DB constraintov
                 ModelState.AddModelError(nameof(Subject.Name), "You already have a subject with this name.");
                 return View(subject);
             }
         }
-
 
         // GET: Subjects/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -117,9 +128,16 @@ namespace StudyBuddy.Controllers
             if (string.IsNullOrEmpty(userId)) return Challenge();
 
             var subject = await _context.Subjects
+                .Include(s => s.Topics)
                 .FirstOrDefaultAsync(s => s.SubjectId == id && s.UserId == userId);
 
             if (subject == null) return NotFound();
+
+            ViewBag.Subjects = await _context.Subjects
+                .Where(s => s.UserId == userId)
+                .OrderBy(s => s.Name)
+                .AsNoTracking()
+                .ToListAsync();
 
             return View(subject);
         }
@@ -135,6 +153,7 @@ namespace StudyBuddy.Controllers
             if (string.IsNullOrEmpty(userId)) return Challenge();
 
             var existing = await _context.Subjects
+                .Include(s => s.Topics)
                 .FirstOrDefaultAsync(s => s.SubjectId == id && s.UserId == userId);
 
             if (existing == null) return NotFound();
@@ -148,15 +167,19 @@ namespace StudyBuddy.Controllers
                 {
                     existing.Name = subject.Name;
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateException)
                 {
-                    if (!SubjectExists(id)) return NotFound();
-                    throw;
+                    ModelState.AddModelError(nameof(Subject.Name), "You already have a subject with this name.");
                 }
-
-                return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.Subjects = await _context.Subjects
+                .Where(s => s.UserId == userId)
+                .OrderBy(s => s.Name)
+                .AsNoTracking()
+                .ToListAsync();
 
             return View(existing);
         }
@@ -170,10 +193,15 @@ namespace StudyBuddy.Controllers
             if (string.IsNullOrEmpty(userId)) return Challenge();
 
             var subject = await _context.Subjects
-                .Include(s => s.User)
                 .FirstOrDefaultAsync(m => m.SubjectId == id && m.UserId == userId);
 
             if (subject == null) return NotFound();
+
+            ViewBag.Subjects = await _context.Subjects
+                .Where(s => s.UserId == userId)
+                .OrderBy(s => s.Name)
+                .AsNoTracking()
+                .ToListAsync();
 
             return View(subject);
         }
@@ -191,16 +219,14 @@ namespace StudyBuddy.Controllers
 
             if (subject == null) return NotFound();
 
-            var sessions = await _context.StudySessions
-                .Where(ss => ss.SubjectId == id)
-                .ToListAsync();
+            // Restrict relationships cleanup
+            var sessions = await _context.StudySessions.Where(ss => ss.SubjectId == id).ToListAsync();
             _context.StudySessions.RemoveRange(sessions);
 
-            var tasks = await _context.StudyTasks
-                .Where(t => t.SubjectId == id)
-                .ToListAsync();
+            var tasks = await _context.StudyTasks.Where(t => t.SubjectId == id).ToListAsync();
             _context.StudyTasks.RemoveRange(tasks);
 
+            // Topics are cascade-deleted by DB rule
             _context.Subjects.Remove(subject);
 
             await _context.SaveChangesAsync();

@@ -1,49 +1,71 @@
 @model IEnumerable<StudyBuddy.Models.Topic>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Topics";
 }
+
+<link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
 
 <div class="app-shell">
     <main class="main-layout">
         @await Html.PartialAsync("_Sidebar", null)
 
         <section class="center-column">
-            <h1>Index</h1>
+            <div class="tasks-card">
+                <div class="card-title">TOPICS</div>
 
-            <p>
-                <a asp-action="Create">Create New</a>
-            </p>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Name)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Subject)
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-            @foreach (var item in Model) {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Subject.Name)
-                        </td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.TopicId">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.TopicId">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.TopicId">Delete</a>
-                        </td>
-                    </tr>
-            }
-                </tbody>
-            </table>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+                    <div class="sidebar-section-title">All topics</div>
+
+                    <a asp-action="Create" class="btn-add"
+                       style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        + Add topic
+                    </a>
+                </div>
+
+                @if (Model == null || !Model.Any())
+                {
+                    <div class="task-item" style="justify-content:flex-start;">
+                        <div style="color: var(--text-muted); font-size: 14px;">
+                            No topics yet.
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <ul class="task-list">
+                        @foreach (var item in Model.OrderBy(t => t.Subject!.Name).ThenBy(t => t.Name))
+                        {
+                            <li class="task-item" style="align-items:center;">
+                                <div class="task-left" style="cursor:default;">
+                                    <div style="font-weight:600;">@item.Name</div>
+                                    <div style="color: var(--text-muted); font-size: 13px;">
+                                        Subject: @(item.Subject?.Name ?? "—")
+                                    </div>
+                                </div>
+
+                                <div style="display:flex; gap:10px; align-items:center;">
+                                    <a asp-action="Details" asp-route-id="@item.TopicId"
+                                       class="chip chip-alt" style="text-decoration:none;">
+                                        Details
+                                    </a>
+
+                                    <a asp-action="Edit" asp-route-id="@item.TopicId"
+                                       class="chip" style="text-decoration:none;">
+                                        Edit
+                                    </a>
+
+                                    <a asp-action="Delete" asp-route-id="@item.TopicId"
+                                       class="chip" style="text-decoration:none; background:#fde6d7; color:#6a373b;">
+                                        Delete
+                                    </a>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+
+            </div>
         </section>
     </main>
 </div>
