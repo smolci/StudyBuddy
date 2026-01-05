@@ -1,4 +1,5 @@
 # StudyBuddy
+studybuddy-cma0h0bnc5dbckfu.germanywestcentral-01.azurewebsites.net
 
 ## Razvijalca
 Luka Karoli (63240138) in Aljaž Smole (63240293)
