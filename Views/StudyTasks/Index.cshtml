@@ -15,7 +15,33 @@
 
         <section class="center-column">
             <div class="tasks-card">
-        <div class="card-title">STUDY TASKS</div>
+                <div class="card-title">INCOMPLETE TASKS</div>
+                @if (!incompleteTasks.Any())
+                {
+                    <div style="color: var(--text-muted); font-size: 14px; margin: 8px 0;">
+                        No incomplete tasks.
+                    </div>
+                }
+                else
+                {
+                    <ul class="task-list">
+                        @foreach (var task in incompleteTasks)
+                        {
+                            <li class="task-item" style="align-items: center;">
+                                <div class="task-left" style="cursor: default; flex: 1;">
+                                    <div style="font-weight: 600;">
+                                        @task.Description, Duration: @($"{task.DurationMinutes}m")
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--text-muted);">
+                                        User: @task.User?.Id, Subject: @task.Subject?.Name
+                                    </div>
+                                </div>
+
+                                <div style="display:flex; gap:10px; align-items:center;">
+                                    <a asp-action="Details" asp-route-id="@task.TaskId"
+                                       class="chip chip-alt" style="text-decoration:none;">
+                                        Details
+                                    </a>
 
                                     <a asp-action="Edit" asp-route-id="@task.TaskId"
                                        class="chip" style="text-decoration:none;">
@@ -78,8 +104,6 @@
                         }
                     </ul>
                 }
-            </div>
-        }
             </div>
         </section>
     </main>

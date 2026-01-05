@@ -512,13 +512,45 @@ if (window.studyBuddyInitialized) {
       const checkbox = li.querySelector(".task-checkbox-input");
       if (!checkbox) return;
 
-      checkbox.addEventListener("change", () => {
-        if (checkbox.checked) {
-          li.classList.add("completed");
-          setTimeout(() => li.remove(), 300);
-        }
+      const taskId = li.dataset.taskId;
+      if (!taskId) {
+          console.error("taskId missing on li element", li);
+          return;
+      }
+
+      checkbox.addEventListener("change", async () => {
+          if (!checkbox.checked) return;
+
+          const completedUrl = window.studyBuddyConfig?.setCompletedUrl;
+          if (!completedUrl) {
+              console.error("setCompletedUrl not set");
+              return;
+          }
+
+          try {
+              const res = await fetch(completedUrl, {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json",
+                      "Accept": "application/json"
+                  },
+                  body: JSON.stringify({ taskId: parseInt(taskId) })
+              });
+
+              if (res.ok) {
+                  li.classList.add("completed");
+                  setTimeout(() => li.remove(), 300);
+              } else {
+                  console.error("Failed to complete task", await res.text(), res.status);
+                  checkbox.checked = false;
+              }
+
+          } catch (err) {
+              console.error("Failed to complete task", err);
+              checkbox.checked = false;
+          }
       });
-    }
+  }
 
     document.querySelectorAll(".task-item").forEach(bindTaskItem);
 
