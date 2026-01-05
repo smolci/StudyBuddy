@@ -27,9 +27,9 @@ Na podlagi zbranih podatkov lahko uporabnik analizira svoje učne navade (**pods
 ## Zaslonske slike aplikacije
 
 ### Spletna aplikacija
-![Dashboard – pregled učenja](docs/images/web_dashboard.png)
-![Upravljanje predmetov in tem](docs/images/web_subjects.png)
-![Flashcardi](docs/images/web_flashcards.png)
+![Dashboard – pregled učenja](wwwroot/images/Dashboard.png)
+![Upravljanje predmetov in tem](wwwroot/images/Subjects.png)
+![Upravljanje z tasks (nalogami)](wwwroot/images/Tasks.png)
 
 ### Mobilna aplikacija
 ![Mobilni prikaz – študijska seja](docs/images/mobile_session.png)
