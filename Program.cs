@@ -15,14 +15,21 @@ builder.Services.AddDbContext<StudyBuddyContext>(options =>
 // Identity
 builder.Services.AddDefaultIdentity<User>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = false; // ne potrebuje email confirmation
+    options.SignIn.RequireConfirmedAccount = false; 
 })
-.AddRoles<IdentityRole>() // če boš uporabil vloge
+.AddRoles<IdentityRole>() 
 .AddEntityFrameworkStores<StudyBuddyContext>();
 
 builder.Services.AddRazorPages();
 
+builder.Services.AddSwaggerGen();
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+});
 
 // Middleware
 if (!app.Environment.IsDevelopment())
