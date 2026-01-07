@@ -1,0 +1,97 @@
+@model StudyBuddy.Models.Question
+
+@{
+    ViewData["Title"] = "Question Details";
+}
+
+<link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
+
+<div class="app-shell">
+    <main class="main-layout">
+        @await Html.PartialAsync("_Sidebar", null)
+        
+        <section class="center-column">
+            <div class="tasks-card">
+                <div class="card-title">QUESTION DETAILS</div>
+                
+                <ul class="task-list">
+                    <li class="task-item">
+                        <div class="task-left" style="cursor: default;">
+                            <span style="font-weight:600;">Text</span>
+                        </div>
+                        <div class="task-left" style="cursor: default;">
+                            <span>@Model?.Text</span>
+                        </div>
+                    </li>
+                    <li class="task-item">
+                        <div class="task-left" style="cursor: default;">
+                            <span style="font-weight:600;">Correct Answer</span>
+                        </div>
+                        <div class="task-left" style="cursor: default;">
+                            <span>@Model?.CorrectAnswer</span>
+                        </div>
+                    </li>
+
+                    @if(!string.IsNullOrWhiteSpace(Model.WrongAnswer1))
+                    {
+                        <li class="task-item">
+                            <div class="task-left" style="cursor: default;">
+                                <span style="font-weight:600;">Wrong Answer 1</span>
+                            </div>
+                            <div class="task-left" style="cursor: default;">
+                                <span>@Model.WrongAnswer1</span>
+                            </div>
+                        </li>
+                    }
+
+                    @if(!string.IsNullOrWhiteSpace(Model.WrongAnswer2))
+                    {
+                        <li class="task-item">
+                            <div class="task-left" style="cursor: default;">
+                                <span style="font-weight:600;">Wrong Answer 2</span>
+                            </div>
+                            <div class="task-left" style="cursor: default;">
+                                <span>@Model.WrongAnswer2</span>
+                            </div>
+                        </li>
+                    }
+
+                    @if(!string.IsNullOrWhiteSpace(Model.WrongAnswer3))
+                    {
+                        <li class="task-item">
+                            <div class="task-left" style="cursor: default;">
+                                <span style="font-weight:600;">Wrong Answer 3</span>
+                            </div>
+                            <div class="task-left" style="cursor: default;">
+                                <span>@Model.WrongAnswer3</span>
+                            </div>
+                        </li>
+                    }
+
+                    <li class="task-item">
+                        <div class="task-left" style="cursor: default;">
+                            <span style="font-weight:600;">Topic</span>
+                        </div>
+                        <div class="task-left" style="cursor: default;">
+                            <span>@Model?.Topic?.Name</span>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="divider"></div>
+
+                <div class="timer-modal-actions">
+                    <a asp-action="Edit" asp-route-id="@Model?.QuestionId" class="btn-primary"
+                    style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                        Edit
+                    </a>
+
+                    <a asp-action="Index" class="btn-secondary"
+                    style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                        Back
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>

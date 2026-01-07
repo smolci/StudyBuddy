@@ -1,0 +1,74 @@
+@model StudyBuddy.Models.Question
+
+@{
+    ViewData["Title"] = "Edit Question";
+}
+
+<link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
+
+<div class="app-shell">
+    <main class="main-layout">
+        @await Html.PartialAsync("_Sidebar", null)
+
+        <section class="center-column">
+            <div class="tasks-card">
+                <div class="card-title">EDIT QUESTION</div>
+
+                <form asp-controller="Question" asp-action="Edit" method="post" class="auth-form">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="QuestionId" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="field">
+                        <label asp-for="Text"></label>
+                        <input asp-for="Text" class="input" placeholder="e.g. What is the capital of Slovenia?" />
+                        <span asp-validation-for="Text" class="field-error"></span>
+                    </div>
+
+                    <div class="field">
+                        <label asp-for="CorrectAnswer"></label>
+                        <input asp-for="CorrectAnswer" class="input" placeholder="Correct answer" />
+                        <span asp-validation-for="CorrectAnswer" class="field-error"></span>
+                    </div>
+
+                    <div class="field">
+                        <label asp-for="WrongAnswer1"></label>
+                        <input asp-for="WrongAnswer1" class="input" placeholder="Wrong answer 1" />
+                        <span asp-validation-for="WrongAnswer1" class="field-error"></span>
+                    </div>
+
+                    <div class="field">
+                        <label asp-for="WrongAnswer2"></label>
+                        <input asp-for="WrongAnswer2" class="input" placeholder="Wrong answer 2" />
+                        <span asp-validation-for="WrongAnswer2" class="field-error"></span>
+                    </div>
+
+                    <div class="field">
+                        <label asp-for="WrongAnswer3"></label>
+                        <input asp-for="WrongAnswer3" class="input" placeholder="Wrong answer 3" />
+                        <span asp-validation-for="WrongAnswer3" class="field-error"></span>
+                    </div>
+
+                    <div class="field">
+                        <label asp-for="TopicId"></label>
+                        <select asp-for="TopicId" class="input" asp-items=ViewBag.TopicId></select>
+                        <span asp-validation-for="TopicId" class="field-error"></span>
+                    </div>
+
+                    <div class="timer-modal-actions" style="margin-top:12px;">
+                        <button type="submit" class="btn-primary">Save</button>
+                        <a asp-action="Index" class="btn-secondary"
+                           style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                            Back
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
