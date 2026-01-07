@@ -1,0 +1,47 @@
+@model StudyBuddy.Models.Question
+
+@{
+    ViewData["Title"] = "Delete Question";
+}
+
+<link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
+
+<div class="app-shell">
+    <main class="main-layout">
+        @await Html.PartialAsync("_Sidebar", null)
+
+        <section class="center-column">
+            <div class="tasks-card">
+                <div class="card-title">DELETE QUESTION</div>
+
+                <div class="auth-alert" style="margin-bottom: 12px;">
+                    Are you sure you want to delete
+                    <strong>@(Model?.Text ?? "this question")</strong>?
+                    This action can’t be undone.
+                </div>
+
+                <div class="auth-alert" style="margin-bottom: 14px;">
+                    <strong>Warning:</strong> This will also remove the question from any associated quizzes.
+                </div>
+
+                <div class="divider"></div>
+
+                <form asp-action="Delete" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="QuestionId" />
+
+                    <div class="timer-modal-actions">
+                        <button type="submit" class="btn-primary" style="background: #7c444f;">
+                            Delete
+                        </button>
+
+                        <a asp-action="Index" class="btn-secondary"
+                           style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+</div>
