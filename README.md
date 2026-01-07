@@ -17,7 +17,7 @@ https://studybuddy-cma0h0bnc5dbckfu.germanywestcentral-01.azurewebsites.net
 StudyBuddy je spletna aplikacija za podporo samostojnemu učenju in pripravi na izpite. Namen sistema je uporabnikom omogočiti bolj organizirano, pregledno in učinkovito učenje s pomočjo strukturiranja učnih vsebin, ter odstraniti nepotrebne moteče faktorje med učenjem. Aplikacija je namenjena tudi tistim, ki samo radi spremljajo kaj in koliko časa so porabili na neki zadevi (npr. projektu).
 Uporabnik lahko:
 - ustvari **predmete (Subjects)** in znotraj njih **teme (Topics)**,
-- sestavlja **kvize (Quizes)**, ki so sestavljeni iz različnih vprašanj,
+- sestavlja **kvize (Quizzes)**, ki so sestavljeni iz različnih vprašanj,
 - beleži **študijske seje (Study sessions)**, kjer se shranjujejo podatki o trajanju učenja, času in obravnavanih temah.
 
 Na podlagi zbranih podatkov lahko uporabnik analizira svoje učne navade (**podstran Stats**) in spremlja, koliko časa posveča posameznim predmetom. Sistem tako združuje organizacijo učne snovi, aktivno ponavljanje in preverjanje znanja na enem mestu.
@@ -49,8 +49,9 @@ Spodaj je prikazan podatkovni model podatkovne baze, ki prikazuje glavne entitet
 - **Subject** – učni predmet, ki pripada uporabniku
 - **Topic** – tema znotraj posameznega predmeta
 - **Quiz** – kviz, sestavljen iz več vprašanj
-- **Questions** – posamezno vprašanje v kvizu
+- **Question** – posamezno vprašanje v kvizu
 - **StudySession** – beleženje časa in trajanja učenja
+- **StudyTask** - učna naloga, omogoča spremljanje izvedbe le-teh
 
 ---
 
