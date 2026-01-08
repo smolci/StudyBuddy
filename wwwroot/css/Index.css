@@ -1666,6 +1666,79 @@ body::before {
     gap: 12px;
 }
 
+/* ========================================================================== */
+/* Password requirements (Register)                                           */
+/* ========================================================================== */
+
+.pw-rules {
+    display: none;
+    margin-top: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--stroke, #E8DCD6);
+    border-radius: var(--radius-md, 14px);
+    background: var(--bg-card, #ffffff);
+    box-shadow: 0 10px 24px rgba(164, 111, 87, 0.06);
+}
+
+.pw-rules.show {
+    display: block;
+}
+
+.pw-rules-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-main, #241A1A);
+    margin-bottom: 8px;
+}
+
+.pw-rules-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 6px;
+}
+
+.pw-rules-list li {
+    position: relative;
+    padding-left: 22px;
+    font-size: 0.9rem;
+    color: var(--text-muted, #6F5A5A);
+}
+
+.pw-rules-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--text-muted, #6F5A5A);
+    line-height: 1.2;
+}
+
+.pw-rules-list li.ok {
+    color: var(--text-main, #241A1A);
+}
+
+.pw-rules-list li.ok::before {
+    content: "✓";
+    color: var(--primary, #9F5255);
+    font-weight: 800;
+}
+
+.btn-logout,
+.btn-logout:hover,
+.btn-logout:focus,
+.btn-logout:active {
+    background-color: var(--btn-secondary-bg, #ffffff) !important; /* ali tvoja sekundarna barva */
+    color: var(--text-main, #241A1A) !important;                  /* ali tvoj text */
+    border-color: var(--stroke, #E8DCD6) !important;
+}
+
+.btn-logout:hover {
+    filter: brightness(0.98); /* rahlo potemni, optional */
+}
+
+
 @media (max-width: 900px) {
     .sb-quiz-grid {
         grid-template-columns: 1fr;

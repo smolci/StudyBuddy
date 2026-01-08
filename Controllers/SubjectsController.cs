@@ -22,12 +22,9 @@ namespace StudyBuddy.Controllers
 
         private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        // GET: Subjects
-        public async Task<IActionResult> Index()
+        // ✅ Loads subjects for sidebar on ANY page
+        private async Task LoadSidebarSubjectsAsync(string userId)
         {
-            var userId = CurrentUserId;
-            if (string.IsNullOrEmpty(userId)) return Challenge();
-
             var subjects = await _context.Subjects
                 .Where(s => s.UserId == userId)
                 .OrderBy(s => s.Name)
@@ -49,15 +46,31 @@ namespace StudyBuddy.Controllers
                 .AsNoTracking()
                 .ToListAsync();
 
+            ViewBag.Subjects = subjects;
+        }
+
+        // ✅ Optional: loads display name (if you want it on all pages too)
+        private async Task LoadDisplayNameAsync()
+        {
             var currentUser = await _userManager.GetUserAsync(User);
             ViewBag.DisplayName =
                 currentUser?.FirstName ??
                 currentUser?.UserName ??
                 _userManager.GetUserName(User) ??
                 "user";
+        }
 
-            ViewBag.Subjects = subjects; // sidebar
+        // GET: Subjects
+        public async Task<IActionResult> Index()
+        {
+            var userId = CurrentUserId;
+            if (string.IsNullOrEmpty(userId)) return Challenge();
 
+            await LoadSidebarSubjectsAsync(userId);
+            await LoadDisplayNameAsync();
+
+            // reuse the sidebar subjects as the page model
+            var subjects = (IEnumerable<Subject>)ViewBag.Subjects;
             return View(subjects);
         }
 
@@ -69,24 +82,27 @@ namespace StudyBuddy.Controllers
             var userId = CurrentUserId;
             if (string.IsNullOrEmpty(userId)) return Challenge();
 
+            await LoadSidebarSubjectsAsync(userId);
+            await LoadDisplayNameAsync();
+
             var subject = await _context.Subjects
                 .Include(s => s.Topics)
                 .FirstOrDefaultAsync(m => m.SubjectId == id && m.UserId == userId);
 
             if (subject == null) return NotFound();
 
-            ViewBag.Subjects = await _context.Subjects
-                .Where(s => s.UserId == userId)
-                .OrderBy(s => s.Name)
-                .AsNoTracking()
-                .ToListAsync();
-
             return View(subject);
         }
 
         // GET: Subjects/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var userId = CurrentUserId;
+            if (string.IsNullOrEmpty(userId)) return Challenge();
+
+            await LoadSidebarSubjectsAsync(userId);
+            await LoadDisplayNameAsync();
+
             return View();
         }
 
@@ -97,6 +113,10 @@ namespace StudyBuddy.Controllers
         {
             var userId = CurrentUserId;
             if (string.IsNullOrEmpty(userId)) return Challenge();
+
+            // important: if validation fails we still need sidebar
+            await LoadSidebarSubjectsAsync(userId);
+            await LoadDisplayNameAsync();
 
             subject.UserId = userId;
             ModelState.Remove(nameof(Subject.UserId));
@@ -126,17 +146,14 @@ namespace StudyBuddy.Controllers
             var userId = CurrentUserId;
             if (string.IsNullOrEmpty(userId)) return Challenge();
 
+            await LoadSidebarSubjectsAsync(userId);
+            await LoadDisplayNameAsync();
+
             var subject = await _context.Subjects
                 .Include(s => s.Topics)
                 .FirstOrDefaultAsync(s => s.SubjectId == id && s.UserId == userId);
 
             if (subject == null) return NotFound();
-
-            ViewBag.Subjects = await _context.Subjects
-                .Where(s => s.UserId == userId)
-                .OrderBy(s => s.Name)
-                .AsNoTracking()
-                .ToListAsync();
 
             return View(subject);
         }
@@ -150,6 +167,10 @@ namespace StudyBuddy.Controllers
 
             var userId = CurrentUserId;
             if (string.IsNullOrEmpty(userId)) return Challenge();
+
+            // important: if validation fails we still need sidebar
+            await LoadSidebarSubjectsAsync(userId);
+            await LoadDisplayNameAsync();
 
             var existing = await _context.Subjects
                 .Include(s => s.Topics)
@@ -174,12 +195,6 @@ namespace StudyBuddy.Controllers
                 }
             }
 
-            ViewBag.Subjects = await _context.Subjects
-                .Where(s => s.UserId == userId)
-                .OrderBy(s => s.Name)
-                .AsNoTracking()
-                .ToListAsync();
-
             return View(existing);
         }
 
@@ -191,16 +206,13 @@ namespace StudyBuddy.Controllers
             var userId = CurrentUserId;
             if (string.IsNullOrEmpty(userId)) return Challenge();
 
+            await LoadSidebarSubjectsAsync(userId);
+            await LoadDisplayNameAsync();
+
             var subject = await _context.Subjects
                 .FirstOrDefaultAsync(m => m.SubjectId == id && m.UserId == userId);
 
             if (subject == null) return NotFound();
-
-            ViewBag.Subjects = await _context.Subjects
-                .Where(s => s.UserId == userId)
-                .OrderBy(s => s.Name)
-                .AsNoTracking()
-                .ToListAsync();
 
             return View(subject);
         }

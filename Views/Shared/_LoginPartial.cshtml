@@ -5,33 +5,30 @@
 @inject UserManager<User> UserManager
 
 <ul class="navbar-nav login-actions">
-@if (SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a class="btn btn-primary"
-           asp-area="Identity"
-           asp-page="/Account/Manage/Index">
-            Profile
-        </a>
-    </li>
-    <li class="nav-item">
-        <form id="logoutForm" class="d-inline"
-              asp-area="Identity"
-              asp-page="/Account/Logout"
-              asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button type="submit" class="btn btn-secondary">
-                Logout
-            </button>
-        </form>
-    </li>
-}
-else
-{
-    <li class="nav-item me-2">
-        <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="btn btn-ghost" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
-}
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Manage/Index">
+                Profile
+            </a>
+        </li>
+        <li class="nav-item">
+            <form id="logoutForm" class="d-inline" asp-area="Identity" asp-page="/Account/Logout"
+                asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="btn btn-secondary btn-logout">
+                    Logout
+                </button>
+
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item me-2">
+            <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="btn btn-ghost" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+    }
 </ul>
