@@ -75,12 +75,6 @@
             </a>
         </li>
 
-        <li class="nav-item @(settingsActive ? "active" : "")">
-            <a asp-area="Identity" asp-page="/Account/Manage/Index" class="nav-link">
-                <span>⚙️ Settings</span>
-            </a>
-        </li>
-
         <div class="sidebar-section-title">Subjects</div>
         <div class="project-chips">
             @foreach (var subject in subjects)

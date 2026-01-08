@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using StudyBuddy.Data;
 using Microsoft.EntityFrameworkCore;
-using StudyBuddy.Models.ViewModels; // <-- IMPORTANT
+using StudyBuddy.Models.ViewModels;
 using System;
 using System.Linq;
 
@@ -106,7 +106,7 @@ public class HomeController : Controller
         var statsVm = new StatsViewModel
         {
             TotalWeekMinutes = totalWeekMinutes,
-            WeekChangePercent = null, // homepage: optional
+            WeekChangePercent = null,
             Days = days,
 
             // homepage doesn't care about subject highlight -> keep safe defaults
@@ -123,7 +123,7 @@ public class HomeController : Controller
         {
             Subjects = subjects,
             StudyTasks = tasks,
-            Stats = statsVm // <-- THIS FIXES HOMEPAGE CHART
+            Stats = statsVm
         };
 
         return View(model);

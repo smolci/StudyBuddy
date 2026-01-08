@@ -18,13 +18,13 @@
             @Html.AntiForgeryToken()
 
             <div class="field">
-                <label asp-for="Description"></label>
+                <label asp-for="Description">Description</label>
                 <input asp-for="Description" class="input" placeholder="e.g. Read Chapter 5" />
                 <span asp-validation-for="Description" class="field-error"></span>
             </div>
 
             <div class="field">
-                <label asp-for="SubjectId"></label>
+                <label asp-for="SubjectId">Subject</label>
                 <select asp-for="SubjectId" class="input" asp-items="ViewBag.SubjectId">
                     <option value="">Select Subject</option>
                 </select>
@@ -32,7 +32,7 @@
             </div>
 
             <div class="field">
-                <label asp-for="DurationMinutes"></label>
+                <label asp-for="DurationMinutes">Duration</label>
                 <input asp-for="DurationMinutes" class="input" placeholder="e.g. 30" />
                 <span asp-validation-for="DurationMinutes" class="field-error"></span>
             </div>

@@ -21,7 +21,6 @@ namespace StudyBuddy.Controllers.Api
             _context = context;
         }
 
-        // DTO (varna polja)
         private static object ToDto(User u) => new
         {
             u.Id,
@@ -32,7 +31,6 @@ namespace StudyBuddy.Controllers.Api
         };
 
         // GET: api/UsersApi
-        // Swagger trik: da UI pokaže header polje (filter ga še vedno preverja)
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetUsers(
             [FromHeader(Name = "ApiKey")] string apiKey)
@@ -78,7 +76,6 @@ namespace StudyBuddy.Controllers.Api
         }
 
         // PUT: api/UsersApi/{id}
-        // Urejamo samo varna polja (ne Identity stuff)
         public class UpdateUserDto
         {
             public string FirstName { get; set; } = "";
@@ -96,14 +93,12 @@ namespace StudyBuddy.Controllers.Api
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
 
-            // osnovna validacija
             if (string.IsNullOrWhiteSpace(dto.FirstName) || string.IsNullOrWhiteSpace(dto.LastName))
                 return BadRequest("FirstName and LastName are required.");
 
             user.FirstName = dto.FirstName.Trim();
             user.LastName = dto.LastName.Trim();
 
-            // Email/UserName lahko pustiš prazno in se ne spremeni
             if (!string.IsNullOrWhiteSpace(dto.Email)) user.Email = dto.Email.Trim();
             if (!string.IsNullOrWhiteSpace(dto.UserName)) user.UserName = dto.UserName.Trim();
 
@@ -112,8 +107,6 @@ namespace StudyBuddy.Controllers.Api
         }
 
         // POST: api/UsersApi
-        // ⚠️ Identity user creation bi moral iti skozi UserManager + password.
-        // Tukaj naredimo "safe" create brez passworda samo za demo (če res rabiš).
         public class CreateUserDto
         {
             public string FirstName { get; set; } = "";
