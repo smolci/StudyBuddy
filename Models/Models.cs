@@ -9,13 +9,11 @@ namespace StudyBuddy.Models
     {
         [Required]
         public required string FirstName { get; set; }
-
         [Required]
         public required string LastName { get; set; }
 
         public virtual ICollection<Subject> Subjects { get; set; } = new List<Subject>();
         public virtual ICollection<StudySession> StudySessions { get; set; } = new List<StudySession>();
-        public virtual ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
         public virtual ICollection<StudyTask> StudyTasks { get; set; } = new List<StudyTask>();
     }
 
@@ -29,13 +27,9 @@ namespace StudyBuddy.Models
 
         [Required]
         public required string UserId { get; set; }
-
-        // Make nullable: EF can load this lazily/eagerly; it may be null in some cases.
         public virtual User? User { get; set; }
 
-        // Topics belong to Subject (cascade configured in StudyBuddyContext)
         public virtual ICollection<Topic> Topics { get; set; } = new List<Topic>();
-
         public virtual ICollection<StudySession> StudySessions { get; set; } = new List<StudySession>();
         public virtual ICollection<StudyTask> StudyTasks { get; set; } = new List<StudyTask>();
     }
@@ -50,8 +44,6 @@ namespace StudyBuddy.Models
 
         [Required]
         public int SubjectId { get; set; }
-
-        // Make nullable to avoid nullability issues when EF isn't including Subject
         public virtual Subject? Subject { get; set; }
 
         public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
@@ -67,49 +59,13 @@ namespace StudyBuddy.Models
 
         [Required]
         public required string CorrectAnswer { get; set; }
-
         public string? WrongAnswer1 { get; set; }
         public string? WrongAnswer2 { get; set; }
         public string? WrongAnswer3 { get; set; }
 
         [Required]
         public int TopicId { get; set; }
-
-        // Make nullable to avoid nullability issues when EF isn't including Topic
         public virtual Topic? Topic { get; set; }
-
-        public virtual ICollection<QuizQuestion> QuizQuestions { get; set; } = new List<QuizQuestion>();
-    }
-
-    public class Quiz
-    {
-        [Key]
-        public int QuizId { get; set; }
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        [Required]
-        public required string UserId { get; set; }
-
-        // Make nullable: can be null unless included
-        public virtual User? User { get; set; }
-
-        public virtual ICollection<QuizQuestion> QuizQuestions { get; set; } = new List<QuizQuestion>();
-    }
-
-    public class QuizQuestion
-    {
-        [Required]
-        public int QuizId { get; set; }
-
-        // Make nullable: can be null unless included
-        public virtual Quiz? Quiz { get; set; }
-
-        [Required]
-        public int QuestionId { get; set; }
-
-        // Make nullable: can be null unless included
-        public virtual Question? Question { get; set; }
     }
 
     public class StudySession
@@ -122,14 +78,10 @@ namespace StudyBuddy.Models
 
         [Required]
         public required string UserId { get; set; }
-
-        // Make nullable: can be null unless included
         public virtual User? User { get; set; }
 
         [Required]
         public int SubjectId { get; set; }
-
-        // Make nullable: can be null unless included
         public virtual Subject? Subject { get; set; }
     }
 
@@ -144,14 +96,10 @@ namespace StudyBuddy.Models
 
         [Required]
         public required string UserId { get; set; }
-
-        // Make nullable: can be null unless included
         public virtual User? User { get; set; }
 
         [Required]
         public int SubjectId { get; set; }
-
-        // Make nullable: can be null unless included
         public virtual Subject? Subject { get; set; }
     }
 }
