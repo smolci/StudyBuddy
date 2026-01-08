@@ -32,10 +32,10 @@ Na podlagi zbranih podatkov lahko uporabnik analizira svoje učne navade (**pods
 ![Upravljanje z tasks (nalogami)](wwwroot/images/Tasks.png)
 
 ### Mobilna aplikacija
-![Mobilni prikaz – študijska seja](wwwroot/images/android1.png)
-![Mobilni prikaz – kviz](wwwroot/images/android2.png)
-
----
+<p align="center">
+  <img src="wwwroot/images/android1.png" width="45%" />
+  <img src="wwwroot/images/android2.png" width="45%" />
+</p>
 
 ## Podatkovni model
 
