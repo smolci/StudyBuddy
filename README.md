@@ -32,8 +32,8 @@ Na podlagi zbranih podatkov lahko uporabnik analizira svoje učne navade (**pods
 ![Upravljanje z tasks (nalogami)](wwwroot/images/Tasks.png)
 
 ### Mobilna aplikacija
-![Mobilni prikaz – študijska seja](docs/images/mobile_session.png)
-![Mobilni prikaz – kviz](docs/images/mobile_quiz.png)
+![Mobilni prikaz – študijska seja](wwwroot/images/android1.png)
+![Mobilni prikaz – kviz](wwwroot/images/android2.png)
 
 ---
 
