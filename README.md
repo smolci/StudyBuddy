@@ -41,7 +41,7 @@ Na podlagi zbranih podatkov lahko uporabnik analizira svoje učne navade (**pods
 
 Spodaj je prikazan podatkovni model podatkovne baze, ki prikazuje glavne entitete sistema in njihove povezave.
 
-![Podatkovni model](wwwroot/images/ER_diagram.jpg)
+![Podatkovni model](wwwroot/images/er_diagram.jpg)
 
 ### Opis entitet
 
