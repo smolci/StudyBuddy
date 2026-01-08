@@ -36,20 +36,35 @@
                 <input asp-for="Input.Email" class="input" autocomplete="username" aria-required="true" placeholder="john.smith@example.com" />
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
+
             <div class="field">
                 <label asp-for="Input.Password">Password</label>
                 <input asp-for="Input.Password" class="input" autocomplete="new-password" aria-required="true" placeholder="Password" />
+
+                <!-- Password requirements (shows when user starts typing/focuses) -->
+                <div id="pwRules" class="pw-rules" aria-live="polite">
+                    <div class="pw-rules-title">Password requirements</div>
+                    <ul class="pw-rules-list">
+                        <li id="ruleLen">6–100 characters</li>
+                        <li id="ruleNonAlnum">At least 1 non-alphanumeric character</li>
+                        <li id="ruleDigit">At least 1 digit (0–9)</li>
+                        <li id="ruleUpper">At least 1 uppercase letter (A–Z)</li>
+                    </ul>
+                </div>
+
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>
+
             <div class="field">
                 <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                 <input asp-for="Input.ConfirmPassword" class="input" autocomplete="new-password" aria-required="true" placeholder="Confirm Password" />
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
+
             <button id="registerSubmit" type="submit" class="btn-primary w100">Register</button>
+
             <div class="auth-links">
-                <a asp-page="./Login"
-                   asp-route-returnUrl="@Model.ReturnUrl">
+                <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">
                     Already have an account? Log in
                 </a>
             </div>
@@ -59,4 +74,45 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        (function () {
+            const pwInput =
+                document.querySelector('input[name="Input.Password"]') ||
+                document.getElementById('Input_Password');
+
+            const box = document.getElementById('pwRules');
+            if (!pwInput || !box) return;
+
+            const ruleLen = document.getElementById('ruleLen');
+            const ruleNonAlnum = document.getElementById('ruleNonAlnum');
+            const ruleDigit = document.getElementById('ruleDigit');
+            const ruleUpper = document.getElementById('ruleUpper');
+
+            function updateRules() {
+                const v = pwInput.value || "";
+
+                // Show box when user starts interacting / typing
+                if (document.activeElement === pwInput || v.length > 0) box.classList.add('show');
+                else box.classList.remove('show');
+
+                const okLen = v.length >= 6 && v.length <= 100;
+                const okNonAlnum = /[^a-zA-Z0-9]/.test(v);
+                const okDigit = /\d/.test(v);
+                const okUpper = /[A-Z]/.test(v);
+
+                ruleLen.classList.toggle('ok', okLen);
+                ruleNonAlnum.classList.toggle('ok', okNonAlnum);
+                ruleDigit.classList.toggle('ok', okDigit);
+                ruleUpper.classList.toggle('ok', okUpper);
+            }
+
+            pwInput.addEventListener('focus', updateRules);
+            pwInput.addEventListener('blur', updateRules);
+            pwInput.addEventListener('input', updateRules);
+
+            // Initial state (in case browser autofills)
+            updateRules();
+        })();
+    </script>
 }
