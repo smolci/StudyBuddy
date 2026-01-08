@@ -2,163 +2,131 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudyBuddy.Data;
 using StudyBuddy.Models;
+using StudyBuddy.Models.ViewModels;
 
 namespace StudyBuddy.Controllers
 {
     public class QuizzesController : Controller
     {
         private readonly StudyBuddyContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public QuizzesController(StudyBuddyContext context)
+        public QuizzesController(StudyBuddyContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        // GET: Quizzes
+        // GET: /Quizzes
         public async Task<IActionResult> Index()
         {
-            var studyBuddyContext = _context.Quizzes.Include(q => q.User);
-            return View(await studyBuddyContext.ToListAsync());
-        }
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Challenge();
 
-        // GET: Quizzes/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
+            // Sidebar subjects (da _Sidebar dela enako kot drugje)
+            var userSubjects = await _context.Subjects
+                .Where(s => s.UserId == currentUser.Id)
+                .ToListAsync();
+            ViewBag.Subjects = userSubjects;
+
+            var topics = await _context.Topics
+                .Include(t => t.Subject)
+                .Where(t => t.Subject != null && t.Subject.UserId == currentUser.Id)
+                .OrderBy(t => t.Subject.Name).ThenBy(t => t.Name)
+                .ToListAsync();
+
+            var vm = new QuizGenerateViewModel
             {
-                return NotFound();
-            }
+                NumberOfQuestions = 10,
+                TopicId = topics.FirstOrDefault()?.TopicId ?? 0,
+                Topics = topics.Select(t => new SelectListItem
+                {
+                    Value = t.TopicId.ToString(),
+                    Text = $"{t.Subject.Name} — {t.Name}"
+                }).ToList()
+            };
 
-            var quiz = await _context.Quizzes
-                .Include(q => q.User)
-                .FirstOrDefaultAsync(m => m.QuizId == id);
-            if (quiz == null)
-            {
-                return NotFound();
-            }
-
-            return View(quiz);
+            return View(vm);
         }
 
-        // GET: Quizzes/Create
-        public IActionResult Create()
-        {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
-            return View();
-        }
-
-        // POST: Quizzes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: /Quizzes/Generate
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("QuizId,CreatedAt,UserId")] Quiz quiz)
+        public async Task<IActionResult> Generate(QuizGenerateViewModel input)
         {
-            if (ModelState.IsValid)
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Challenge();
+
+            // Sidebar subjects
+            var userSubjects = await _context.Subjects
+                .Where(s => s.UserId == currentUser.Id)
+                .ToListAsync();
+            ViewBag.Subjects = userSubjects;
+
+            // Validacija: topic mora biti njegov
+            var topic = await _context.Topics
+                .Include(t => t.Subject)
+                .FirstOrDefaultAsync(t =>
+                    t.TopicId == input.TopicId &&
+                    t.Subject != null &&
+                    t.Subject.UserId == currentUser.Id);
+
+            if (topic == null)
             {
-                _context.Add(quiz);
-                await _context.SaveChangesAsync();
+                // fallback: ponovno naloži Index z dropdowni
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", quiz.UserId);
-            return View(quiz);
-        }
 
-        // GET: Quizzes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var numberRequested = Math.Max(1, input.NumberOfQuestions);
 
-            var quiz = await _context.Quizzes.FindAsync(id);
-            if (quiz == null)
-            {
-                return NotFound();
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", quiz.UserId);
-            return View(quiz);
-        }
+            // Vzemi vsa vprašanja za ta topic
+            var allQuestions = await _context.Questions
+                .Where(q => q.TopicId == topic.TopicId)
+                .ToListAsync();
 
-        // POST: Quizzes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("QuizId,CreatedAt,UserId")] Quiz quiz)
-        {
-            if (id != quiz.QuizId)
-            {
-                return NotFound();
-            }
+            // Shuffle (in-memory) + take N
+            var rng = new Random();
+            var picked = allQuestions
+                .OrderBy(_ => rng.Next())
+                .Take(numberRequested)
+                .ToList();
 
-            if (ModelState.IsValid)
+            // Zgradi VM (options = correct + wrongs, premešano)
+            var takeVm = new QuizTakeViewModel
             {
-                try
+                TopicName = $"{topic.Subject.Name} — {topic.Name}",
+                TopicId = topic.TopicId,
+                Questions = picked.Select(q =>
                 {
-                    _context.Update(quiz);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!QuizExists(quiz.QuizId))
+                    var opts = new List<string>
                     {
-                        return NotFound();
+                        q.CorrectAnswer,
+                        q.WrongAnswer1,
+                        q.WrongAnswer2,
+                        q.WrongAnswer3
                     }
-                    else
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct()
+                    .OrderBy(_ => rng.Next())
+                    .ToList();
+
+                    return new QuizQuestionVM
                     {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", quiz.UserId);
-            return View(quiz);
-        }
+                        QuestionId = q.QuestionId,
+                        Text = q.Text,
+                        CorrectAnswer = q.CorrectAnswer,
+                        Options = opts
+                    };
+                }).ToList()
+            };
 
-        // GET: Quizzes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var quiz = await _context.Quizzes
-                .Include(q => q.User)
-                .FirstOrDefaultAsync(m => m.QuizId == id);
-            if (quiz == null)
-            {
-                return NotFound();
-            }
-
-            return View(quiz);
-        }
-
-        // POST: Quizzes/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var quiz = await _context.Quizzes.FindAsync(id);
-            if (quiz != null)
-            {
-                _context.Quizzes.Remove(quiz);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool QuizExists(int id)
-        {
-            return _context.Quizzes.Any(e => e.QuizId == id);
+            return View("Take", takeVm);
         }
     }
 }

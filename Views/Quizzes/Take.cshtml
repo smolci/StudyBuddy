@@ -1,0 +1,94 @@
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+@model StudyBuddy.Models.ViewModels.QuizTakeViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Study Buddy • Quiz</title>
+    <link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
+</head>
+
+<body>
+    <div class="app-shell">
+        <main class="main-layout">
+
+            <!-- Sidebar -->
+            @await Html.PartialAsync("_Sidebar", null)
+
+            <!-- Center column -->
+            <section class="center-column">
+
+                <section class="tasks-card">
+                    <div class="card-title">Quiz</div>
+
+                    <div class="sb-quiz-header">
+                        <div>
+                            <div class="sb-quiz-topic">@Model.TopicName</div>
+                            <div class="sb-quiz-meta">@Model.Questions.Count question(s)</div>
+                        </div>
+
+                        <a asp-action="Index" asp-controller="Quizzes" class="chip chip-alt"
+                            style="text-decoration:none;">
+                            New quiz
+                        </a>
+                    </div>
+
+                    <div class="sb-quiz-score-banner" id="sbScoreBanner" style="display:none;">
+                        <div class="sb-score-big" id="sbScorePct">0%</div>
+                        <div class="sb-score-small" id="sbScoreDetails">Correct: 0 • Wrong: 0 • Unanswered: 0</div>
+                    </div>
+
+                    <div class="sb-quiz-list">
+                        @for (int i = 0; i < Model.Questions.Count; i++)
+                        {
+                            var q = Model.Questions[i];
+                            var qIndex = i + 1;
+
+                            <div class="sb-quiz-q" data-qid="@q.QuestionId" data-correct="@q.CorrectAnswer">
+                                <div class="sb-quiz-q-top">
+                                    <div class="sb-quiz-q-number">Q@qIndex</div>
+                                    <div class="sb-quiz-q-text">@q.Text</div>
+                                </div>
+
+                                <div class="sb-quiz-options">
+                                    @foreach (var opt in q.Options)
+                                    {
+                                        var inputId = $"q{q.QuestionId}_{opt.GetHashCode()}";
+                                        <label class="sb-quiz-option" for="@inputId">
+                                            <input type="radio" id="@inputId" name="q_@q.QuestionId" value="@opt" />
+                                            <span>@opt</span>
+                                        </label>
+                                    }
+                                </div>
+
+                                <div class="sb-quiz-q-actions">
+                                    <button type="button" class="sb-quiz-check btn-pill secondary">Check</button>
+                                    <div class="sb-quiz-feedback" aria-live="polite"></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="sb-quiz-footer">
+                        <a asp-action="Index" asp-controller="Quizzes" class="btn-pill secondary"
+                            style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                            Back
+                        </a>
+
+                        <button type="button" class="btn-add" id="sbCheckScore">Check your score</button>
+                    </div>
+
+                </section>
+
+            </section>
+        </main>
+    </div>
+
+    <script src="~/js/quizzes.js" asp-append-version="true"></script>
+</body>
+
+</html>
