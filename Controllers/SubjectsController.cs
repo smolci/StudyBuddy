@@ -28,7 +28,6 @@ namespace StudyBuddy.Controllers
             var userId = CurrentUserId;
             if (string.IsNullOrEmpty(userId)) return Challenge();
 
-            // ✅ Projection guarantees topics are loaded (even if Include/lazy loading gets weird)
             var subjects = await _context.Subjects
                 .Where(s => s.UserId == userId)
                 .OrderBy(s => s.Name)

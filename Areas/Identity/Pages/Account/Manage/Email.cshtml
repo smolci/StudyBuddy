@@ -17,8 +17,9 @@
         @if (!ViewData.ModelState.IsValid)
         {
             <div asp-validation-summary="All"
-                 class="auth-alert"
-                 role="alert"></div>
+                class="auth-alert"
+                role="alert">
+            </div>
         }
 
         <div class="field">
@@ -36,7 +37,8 @@
             <input asp-for="Input.NewEmail"
                    class="input"
                    autocomplete="email"
-                   placeholder="Enter new email" />
+                   placeholder="Enter new email"
+                   value=""/>
             <span asp-validation-for="Input.NewEmail"
                   class="field-error"></span>
         </div>
