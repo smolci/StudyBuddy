@@ -35,8 +35,10 @@
     bool tasksActive = IsController("StudyTasks");
     bool statsActive = IsController("Stats");
     bool subjectsActive = IsController("Subjects");
+    bool quizzesActive = IsController("Quizzes");
+
     bool settingsActive = string.Equals(currentArea, "Identity", StringComparison.OrdinalIgnoreCase)
-                          && (currentPage?.StartsWith("/Account/Manage", StringComparison.OrdinalIgnoreCase) ?? false);
+        && (currentPage?.StartsWith("/Account/Manage", StringComparison.OrdinalIgnoreCase) ?? false);
 }
 
 <aside class="sidebar">
@@ -67,6 +69,12 @@
             </a>
         </li>
 
+        <li class="nav-item @(quizzesActive ? "active" : "")">
+            <a asp-controller="Quizzes" asp-action="Index" class="nav-link">
+                <span>🧠 Quizzes</span>
+            </a>
+        </li>
+
         <li class="nav-item @(settingsActive ? "active" : "")">
             <a asp-area="Identity" asp-page="/Account/Manage/Index" class="nav-link">
                 <span>⚙️ Settings</span>
@@ -83,11 +91,13 @@
 
         <div id="addSubjectChip" class="m-1">
             <button id="showInputBtn" type="button" class="btn btn-primary rounded-circle"
-                style="width:30px; height:30px; padding: 0;">+</button>
+                    style="width:30px; height:30px; padding: 0;">+</button>
+
             <form id="addSubjectForm" asp-controller="Home" asp-action="AddSubject" method="post" class="d-none">
-                <input type="hidden" name="returnUrl" value="@((Context.Request.Path + Context.Request.QueryString).ToString())" />
+                <input type="hidden" name="returnUrl"
+                       value="@((Context.Request.Path + Context.Request.QueryString).ToString())" />
                 <input type="text" name="subjectName" placeholder="Ime predmeta" class="form-control mb-1"
-                    style="display:inline-block; width:auto;" />
+                       style="display:inline-block; width:auto;" />
                 <button type="submit" class="btn btn-success btn-sm">Dodaj</button>
             </form>
         </div>
@@ -103,10 +113,12 @@
         <p class="timer-modal-text">Add a new subject to keep things organized.</p>
 
         <form id="addSubjectModalForm" asp-controller="Home" asp-action="AddSubject" method="post">
-            <input type="hidden" name="returnUrl" value="@((Context.Request.Path + Context.Request.QueryString).ToString())" />
+            <input type="hidden" name="returnUrl"
+                   value="@((Context.Request.Path + Context.Request.QueryString).ToString())" />
+
             <div class="timer-modal-input-row">
                 <input type="text" id="addSubjectInput" name="subjectName" placeholder="Subject name..."
-                    autocomplete="off" />
+                       autocomplete="off" />
             </div>
 
             <div class="timer-modal-actions">

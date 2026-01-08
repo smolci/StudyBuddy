@@ -1,41 +1,77 @@
-@model IEnumerable<StudyBuddy.Models.Quiz>
-
 @{
-    ViewData["Title"] = "Index";
+    Layout = "/Views/Shared/_Layout.cshtml";
 }
+@model StudyBuddy.Models.ViewModels.QuizGenerateViewModel
 
-<h1>Index</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Study Buddy • Quizzes</title>
+    <link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
+</head>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.QuizId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.QuizId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.QuizId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<body>
+    <div class="app-shell">
+        <main class="main-layout">
+
+            <!-- Sidebar -->
+            @await Html.PartialAsync("_Sidebar", null)
+
+            <!-- Center column -->
+            <section class="center-column">
+
+                <section class="tasks-card">
+                    <div class="card-title">Quizzes</div>
+
+                    <!-- Generate quiz -->
+                    <div class="sb-quiz-generate">
+                        <div class="sb-quiz-kicker">Generate a new Quiz</div>
+                        <p class="sb-quiz-sub">
+                            Pick a topic and how many questions you want. If there are fewer questions than you requested, we’ll show what we have.
+                            Tip: You can add <strong>new questions</strong> below!.
+
+                        </p>
+
+                        <form asp-action="Generate" asp-controller="Quizzes" method="post" class="sb-quiz-form">
+                            @Html.AntiForgeryToken()
+
+                            <div class="sb-quiz-row">
+                                <label class="sb-quiz-label" for="NumberOfQuestions">Number of questions</label>
+                                <input asp-for="NumberOfQuestions" type="number" min="1" max="200" class="sb-quiz-input" />
+                            </div>
+
+                            <div class="sb-quiz-row">
+                                <label class="sb-quiz-label" for="TopicId">Topic</label>
+                                <select asp-for="TopicId" asp-items="Model.Topics" class="sb-quiz-select"></select>
+                            </div>
+
+                            <div class="sb-quiz-actions">
+                                <button type="submit" class="btn-add">Generate quiz</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Add questions -->
+                    <div class="sb-quiz-generate" style="margin-top:12px;">
+                        <div class="sb-quiz-kicker">Want to add more questions?</div>
+                        <p class="sb-quiz-sub">
+                            Add new questions for your topics so your quizzes become better over time.
+                        </p>
+
+                        <div class="sb-quiz-actions">
+                            <a asp-controller="Question" asp-action="Index"
+                               class="btn-pill secondary"
+                               style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                Go to Questions
+                            </a>
+                        </div>
+                    </div>
+
+                </section>
+
+            </section>
+        </main>
+    </div>
+</body>
+</html>
