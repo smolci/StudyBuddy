@@ -69,12 +69,6 @@
             </a>
         </li>
 
-        <li class="nav-item @(quizzesActive ? "active" : "")">
-            <a asp-controller="Quizzes" asp-action="Index" class="nav-link">
-                <span>🧠 Quizzes</span>
-            </a>
-        </li>
-
         <div class="sidebar-section-title">Subjects</div>
         <div class="project-chips">
             @foreach (var subject in subjects)

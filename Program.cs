@@ -24,7 +24,6 @@ builder.Services.AddDefaultIdentity<User>(options =>
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<StudyBuddyContext>();
 
-// ✅ JWT Bearer (for mobile API)
 var jwtSection = builder.Configuration.GetSection("Jwt");
 var jwtKey = jwtSection["Key"];
 if (string.IsNullOrWhiteSpace(jwtKey))
@@ -60,7 +59,6 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
 });
 
-// Middleware
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -72,7 +70,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// ✅ auth
 app.UseAuthentication();
 app.UseAuthorization();
 
