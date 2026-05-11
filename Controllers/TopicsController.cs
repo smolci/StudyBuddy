@@ -84,7 +84,6 @@ namespace StudyBuddy.Controllers
             var userId = CurrentUserId;
             if (string.IsNullOrEmpty(userId)) return Challenge();
 
-            // Ensure subject belongs to current user
             var subjectOwned = await _context.Subjects
                 .AnyAsync(s => s.SubjectId == topic.SubjectId && s.UserId == userId);
 
@@ -125,7 +124,7 @@ namespace StudyBuddy.Controllers
 
             var topic = await _context.Topics
                 .Include(t => t.Subject)
-                    .ThenInclude(s => s.Topics)
+                    .ThenInclude(s => s!.Topics)
                 .FirstOrDefaultAsync(t => t.TopicId == id && t.Subject != null && t.Subject.UserId == userId);
 
             if (topic == null) return NotFound();
@@ -135,14 +134,12 @@ namespace StudyBuddy.Controllers
                 .ToListAsync();
 
             ViewData["SubjectId"] = new SelectList(subjects, "SubjectId", "Name", topic.SubjectId);
-            ViewBag.Subjects = subjects; // sidebar
+            ViewBag.Subjects = subjects;
 
-            // NEW: topics list for the subsection
-            ViewBag.SubjectTopics = topic.Subject?.Topics ?? new List<Topic>();
+            ViewBag.SubjectTopics = topic.Subject?.Topics ?? [];
 
             return View(topic);
         }
-
 
         // POST: Topics/Edit/5
         [HttpPost]
@@ -154,14 +151,12 @@ namespace StudyBuddy.Controllers
             var userId = CurrentUserId;
             if (string.IsNullOrEmpty(userId)) return Challenge();
 
-            // Ensure the topic belongs to current user
             var existing = await _context.Topics
                 .Include(t => t.Subject)
                 .FirstOrDefaultAsync(t => t.TopicId == id && t.Subject != null && t.Subject.UserId == userId);
 
             if (existing == null) return NotFound();
 
-            // Ensure the new SubjectId (if changed) is also owned by current user
             var subjectOwned = await _context.Subjects
                 .AnyAsync(s => s.SubjectId == topic.SubjectId && s.UserId == userId);
 
@@ -174,16 +169,14 @@ namespace StudyBuddy.Controllers
                 ViewData["SubjectId"] = new SelectList(subjects, "SubjectId", "Name", topic.SubjectId);
                 ViewBag.Subjects = subjects;
 
-                // NEW: topics list for subsection
                 var subj = await _context.Subjects
                     .Include(s => s.Topics)
                     .FirstOrDefaultAsync(s => s.SubjectId == topic.SubjectId && s.UserId == userId);
 
-                ViewBag.SubjectTopics = subj?.Topics ?? new List<Topic>();
+                ViewBag.SubjectTopics = subj?.Topics ?? [];
 
                 return View(topic);
             }
-
 
             try
             {
@@ -224,7 +217,7 @@ namespace StudyBuddy.Controllers
             return View(topic);
         }
 
-        // POST: Topics/Delete/5  (keeps your original behavior)
+        // POST: Topics/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -244,7 +237,6 @@ namespace StudyBuddy.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // NEW: Create topic from Subject/Edit page and return back there
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateForSubject(int subjectId, string name)
@@ -252,7 +244,6 @@ namespace StudyBuddy.Controllers
             var userId = CurrentUserId;
             if (string.IsNullOrEmpty(userId)) return Challenge();
 
-            // ensure subject belongs to user
             var subjectOwned = await _context.Subjects
                 .AnyAsync(s => s.SubjectId == subjectId && s.UserId == userId);
 
@@ -275,13 +266,12 @@ namespace StudyBuddy.Controllers
             }
             catch (DbUpdateException)
             {
-                // ignore duplicates due to unique index; just return back
+                // ignore duplicates
             }
 
             return RedirectToAction("Edit", "Subjects", new { id = subjectId });
         }
 
-        // NEW: Delete topic from Subject/Edit page and return back there
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteFromSubject(int id, int subjectId)
@@ -289,7 +279,6 @@ namespace StudyBuddy.Controllers
             var userId = CurrentUserId;
             if (string.IsNullOrEmpty(userId)) return Challenge();
 
-            // ensure subject belongs to user
             var subjectOwned = await _context.Subjects
                 .AnyAsync(s => s.SubjectId == subjectId && s.UserId == userId);
 
