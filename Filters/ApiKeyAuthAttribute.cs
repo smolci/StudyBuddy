@@ -16,19 +16,16 @@ namespace StudyBuddy.Filters
             ActionExecutingContext context,
             ActionExecutionDelegate next)
         {
-            // Header obstaja?
             if (!context.HttpContext.Request.Headers.TryGetValue(ApiKeyHeaderName, out var potentialApiKey))
             {
                 context.Result = new UnauthorizedResult();
                 return;
             }
 
-            // Preberi ApiKey iz appsettings.json
             var configuration = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
             var apiKey = configuration.GetValue<string>("ApiKey");
 
-            // Se ujema?
-            if (!apiKey.Equals(potentialApiKey))
+            if (apiKey == null || !apiKey.Equals(potentialApiKey))
             {
                 context.Result = new UnauthorizedResult();
                 return;

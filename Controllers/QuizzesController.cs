@@ -29,7 +29,6 @@ namespace StudyBuddy.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Challenge();
 
-            // Sidebar subjects (da _Sidebar dela enako kot drugje)
             var userSubjects = await _context.Subjects
                 .Where(s => s.UserId == currentUser.Id)
                 .ToListAsync();
@@ -38,7 +37,8 @@ namespace StudyBuddy.Controllers
             var topics = await _context.Topics
                 .Include(t => t.Subject)
                 .Where(t => t.Subject != null && t.Subject.UserId == currentUser.Id)
-                .OrderBy(t => t.Subject.Name).ThenBy(t => t.Name)
+                // CS8602 fix: Subject is guaranteed non-null by the Where above; use ! to suppress warning
+                .OrderBy(t => t.Subject!.Name).ThenBy(t => t.Name)
                 .ToListAsync();
 
             var vm = new QuizGenerateViewModel
@@ -48,7 +48,8 @@ namespace StudyBuddy.Controllers
                 Topics = topics.Select(t => new SelectListItem
                 {
                     Value = t.TopicId.ToString(),
-                    Text = $"{t.Subject.Name} — {t.Name}"
+                    // CS8602 fix: Subject non-null guaranteed by Where filter above
+                    Text = $"{t.Subject!.Name} — {t.Name}"
                 }).ToList()
             };
 
@@ -63,13 +64,11 @@ namespace StudyBuddy.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Challenge();
 
-            // Sidebar subjects
             var userSubjects = await _context.Subjects
                 .Where(s => s.UserId == currentUser.Id)
                 .ToListAsync();
             ViewBag.Subjects = userSubjects;
 
-            // Validacija: topic mora biti njegov
             var topic = await _context.Topics
                 .Include(t => t.Subject)
                 .FirstOrDefaultAsync(t =>
@@ -78,43 +77,35 @@ namespace StudyBuddy.Controllers
                     t.Subject.UserId == currentUser.Id);
 
             if (topic == null)
-            {
-                // fallback: ponovno naloži Index z dropdowni
                 return RedirectToAction(nameof(Index));
-            }
 
             var numberRequested = Math.Max(1, input.NumberOfQuestions);
 
-            // Vzemi vsa vprašanja za ta topic
             var allQuestions = await _context.Questions
                 .Where(q => q.TopicId == topic.TopicId)
                 .ToListAsync();
 
-            // Shuffle (in-memory) + take N
             var rng = new Random();
             var picked = allQuestions
                 .OrderBy(_ => rng.Next())
                 .Take(numberRequested)
                 .ToList();
 
-            // Zgradi VM (options = correct + wrongs, premešano)
             var takeVm = new QuizTakeViewModel
             {
-                TopicName = $"{topic.Subject.Name} — {topic.Name}",
+                // CS8602 fix: Subject is non-null (checked in FirstOrDefaultAsync filter above)
+                TopicName = $"{topic.Subject!.Name} — {topic.Name}",
                 TopicId = topic.TopicId,
                 Questions = picked.Select(q =>
                 {
-                    var opts = new List<string>
-                    {
-                        q.CorrectAnswer,
-                        q.WrongAnswer1,
-                        q.WrongAnswer2,
-                        q.WrongAnswer3
-                    }
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    .Distinct()
-                    .OrderBy(_ => rng.Next())
-                    .ToList();
+                    // CS8604 fix: answer properties are nullable strings; use List<string?>
+                    // so the list itself accepts nulls, then filter them out with Where below.
+                    var opts = new List<string?> { q.CorrectAnswer, q.WrongAnswer1, q.WrongAnswer2, q.WrongAnswer3 }
+                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                        .Select(x => x!)   // safe cast after the null filter
+                        .Distinct()
+                        .OrderBy(_ => rng.Next())
+                        .ToList();
 
                     return new QuizQuestionVM
                     {
